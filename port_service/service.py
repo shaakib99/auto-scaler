@@ -1,4 +1,4 @@
 from common.abcs import ServiceABC
 
-class WorkerService(ServiceABC):
+class PortService(ServiceABC):
     pass
