@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
-from sqlalchemy.ext.declarative import DeclarativeMeta
+from sqlalchemy.orm import DeclarativeBase
 from common.models import Query
 
 class DatabaseServiceABC(ABC):
@@ -18,21 +18,21 @@ class DatabaseServiceABC(ABC):
         pass
 
     @abstractmethod
-    async def create_one(self, data: BaseModel, schema: DeclarativeMeta):
+    async def create_one(self, data: BaseModel, schema: DeclarativeBase):
         pass
 
     @abstractmethod
-    async def update_one(self, id: str | int, data: BaseModel, schema: DeclarativeMeta):
+    async def update_one(self, id: str | int, data: BaseModel, schema: DeclarativeBase):
         pass
 
     @abstractmethod
-    async def get_one(self, id: str | int, schema: DeclarativeMeta):
+    async def get_one(self, id: str | int, schema: DeclarativeBase):
         pass
 
     @abstractmethod
-    async def get_all(self, query: Query, schema: DeclarativeMeta):
+    async def get_all(self, query: Query, schema: DeclarativeBase):
         pass
 
     @abstractmethod
-    async def delete_one(self, id: str | int, schema: DeclarativeMeta):
+    async def delete_one(self, id: str | int, schema: DeclarativeBase):
         pass
