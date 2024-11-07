@@ -78,5 +78,7 @@ class MySQLDatabaseService(DatabaseServiceABC):
         return cursor.all()
 
     async def delete_one(self, id, schema: DeclarativeBase):
-        pass
+        data = self.get_one(id, schema)
+        self.session.delete(data)
+        self.session.commit()
 
