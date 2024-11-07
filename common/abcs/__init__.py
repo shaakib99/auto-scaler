@@ -1,1 +1,1 @@
-from .service_abc import ServiceABC
+from .service_abc import *
