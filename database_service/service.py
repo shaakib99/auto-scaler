@@ -3,6 +3,7 @@ from database_service.abcs import DatabaseServiceABC
 from sqlalchemy.orm import DeclarativeBase
 from typing import TypeVar, Generic
 from database_service.mysql_service import MySQLDatabaseService
+from common.models import Query
 from pydantic import BaseModel
 
 T = TypeVar("T")
@@ -13,17 +14,17 @@ class DatabaseService(ServiceABC, Generic[T]):
         self.database = database
     
     async def create_one(self, data: BaseModel) -> T:
-        await self.database.create_one(data, self.schema)
+        return await self.database.create_one(data, self.schema)
 
-    async def update_one(self, id, data) -> T:
-        pass
+    async def update_one(self, id, data: BaseModel) -> T:
+        return await self.database.update_one(id, data, self.schema)
 
-    async def get_one(self, id) -> T:
-        pass
+    async def get_one(self, id: int | str) -> T:
+        return await self.database.get_one(id, self.schema)
 
-    async def get_all(self, query) -> list[T]:
-        pass
+    async def get_all(self, query: Query) -> list[T]:
+        return await self.database.get_all(query, self.schema)
 
     async def delete_one(self, id) -> None:
-        pass
+        return await self.database.delete_one(id, self.schema)
 
