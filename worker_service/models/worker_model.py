@@ -7,5 +7,7 @@ class WorkerModel(BaseModel):
     id: Optional[int] = Field(default=None)
     name: Optional[str] = Field(default=None)
     status: Optional[str] = Field(default=WorkerStatusEnum.INIT)
+    cpu: Optional[int] = Field(default=1, description="Number cpu core")
+    ram: Optional[int] = Field(default=512, description="size of ram in mb")
     created_at: Optional[datetime] = Field(default=datetime.now())
     updated_at: Optional[datetime] = Field(default=datetime.now())
