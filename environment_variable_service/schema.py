@@ -4,7 +4,7 @@ from datetime import datetime
 
 Base = MySQLDatabaseService.get_instance().base
 
-class PortSchema(Base):
+class EnvironmentVariableSchema(Base):
     __tablename__ = "ports"
 
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
