@@ -1,7 +1,8 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Optional
 
 class CreateEnvironmentVariableModel(BaseModel):
+    worker_id: int
     key: str
     value: str
 
