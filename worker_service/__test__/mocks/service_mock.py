@@ -12,6 +12,7 @@ def mock_worker_service(
     mock_docker_service, 
     mock_port_service, 
     mock_environment_variable_service,
+    mock_port_schema,
     mock_environment_variable_schema
     ):
     

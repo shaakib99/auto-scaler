@@ -2,7 +2,7 @@ from database_service.mysql_service import MySQLDatabaseService
 from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Boolean
 from datetime import datetime
 
-Base = MySQLDatabaseService.get_instance().base
+Base = MySQLDatabaseService.get_base()
 
 class EnvironmentVariableSchema(Base):
     __tablename__ = "ports"

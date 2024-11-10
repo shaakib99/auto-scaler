@@ -3,9 +3,11 @@ from port_service.models import CreatePortModel, PortModel
 
 @pytest.fixture
 def mock_create_port_model():
-    create_port_model = CreatePortModel()
-    create_port_model.port_number = 10001
-    create_port_model.port_type = "TEST"
+    create_port_model = CreatePortModel(
+        port_number = 10001,
+        port_type = "TEST",
+        worker_id = 1
+    )
     return create_port_model
 
 @pytest.fixture

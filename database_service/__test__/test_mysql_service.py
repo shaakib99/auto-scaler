@@ -1,5 +1,5 @@
 from unittest.mock import MagicMock
-from database_service.__test__.mocks import db_instance, MockSchema, ModelMock
+from database_service.__test__.mocks import MockSchema, ModelMock, db_instance
 from database_service.mysql_service import MySQLDatabaseService
 from common.models import Query
 import pytest

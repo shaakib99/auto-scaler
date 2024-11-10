@@ -6,8 +6,8 @@ from common.models import Query
 
 
 class EnvironmentVariableService(ServiceABC):
-    def __init__(self, environment_variable_model = DatabaseService[EnvironmentVariableSchema](EnvironmentVariableSchema)):
-        self.environment_variable_model = environment_variable_model
+    def __init__(self, environment_variable_model: DatabaseService[EnvironmentVariableSchema]):
+        self.environment_variable_model = environment_variable_model or DatabaseService[EnvironmentVariableSchema](EnvironmentVariableSchema)
     
     async def create_one(self, data: CreateEnvironmentVariableModel):
         return await self.environment_variable_model.create_one(data)

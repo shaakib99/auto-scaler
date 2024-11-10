@@ -3,9 +3,11 @@ from environment_variable_service.models import CreateEnvironmentVariableModel, 
 
 @pytest.fixture
 def mock_create_environment_variable_model():
-    create_environment_model = CreateEnvironmentVariableModel()
-    create_environment_model.key = "TEST"
-    create_environment_model.value = "TEST"
+    create_environment_model = CreateEnvironmentVariableModel(
+        key = "TEST",
+        value = "TEST",
+        worker_id = 1
+    )
     return create_environment_model
 
 @pytest.fixture

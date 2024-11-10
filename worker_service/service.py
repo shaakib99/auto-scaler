@@ -17,15 +17,15 @@ import uuid
 
 class WorkerService(ServiceABC):
     def __init__(self, 
-        worker_model = DatabaseService[WorkerSchema](WorkerSchema),
-        docker_service = DockerContainerService(),
-        port_service = PortService(),
-        environment_variable_service = EnvironmentVariableService()
+        worker_model: DatabaseService[WorkerSchema],
+        docker_service: DockerContainerService,
+        port_service: PortService,
+        environment_variable_service: EnvironmentVariableService
         ):
-        self.worker_model = worker_model
-        self.port_service = port_service
-        self.environment_variable_service = environment_variable_service
-        self.docker_service = docker_service
+        self.worker_model = worker_model or DatabaseService[WorkerSchema](WorkerSchema)
+        self.port_service = port_service or PortService()
+        self.environment_variable_service = environment_variable_service or EnvironmentVariableService()
+        self.docker_service = docker_service or DockerContainerService()
     
     async def get_one(self, id: int | str):
         data = await self.worker_model.get_one(id)
@@ -46,9 +46,10 @@ class WorkerService(ServiceABC):
         worker_data = await self.worker_model.create_one(worker)
 
         # run docker container
-        create_docker_container_data = CreateDockerContainerModel()
-        create_docker_container_data.image_name = "dockerhub.io/worker"
-        create_docker_container_data.container_name = worker.name
+        create_docker_container_data = CreateDockerContainerModel(
+            image_name = "dockerhub.io/worker",
+            container_name = worker.name
+        )
         create_docker_container_data.cpu = worker.cpu
         create_docker_container_data.ram = worker.ram
 
@@ -77,7 +78,7 @@ class WorkerService(ServiceABC):
 
         worker.container_id = container_id
         del worker.status
-        worker_data = self.update_one(worker_data.id, worker)
+        worker_data = await self.update_one(worker_data.id, worker)
         return worker_data
 
     

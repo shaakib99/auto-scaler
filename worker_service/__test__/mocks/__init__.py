@@ -1,2 +1,2 @@
-from .model_mocks import *
+from .model_mock import *
 from .service_mock import *

@@ -4,5 +4,5 @@ import pytest
 
 @pytest.fixture
 def mock_database_service(db_instance):
-    service = DatabaseService(MockSchema, db_instance)
+    service = DatabaseService(schema=MockSchema, database=db_instance)
     return service

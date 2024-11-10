@@ -10,6 +10,10 @@ class DatabaseServiceABC(ABC):
         pass
 
     @staticmethod
+    def get_base():
+        pass
+
+    @staticmethod
     async def connect():
         pass
 
