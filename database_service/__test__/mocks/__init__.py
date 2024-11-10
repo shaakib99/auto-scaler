@@ -1,3 +1,4 @@
-from .db_mock import db_instance
-from .schema_mock import MockSchema
-from .model_mock import ModelMock
+from .db_mock import *
+from .schema_mock import *
+from .model_mock import *
+from .service_mock import *
