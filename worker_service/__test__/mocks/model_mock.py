@@ -1,5 +1,5 @@
 import pytest
-from worker_service.models import CreateWorkerModel
+from worker_service.models import CreateWorkerModel, UpdateWorkerModel
 
 @pytest.fixture
 def mock_create_worker_model():
@@ -10,3 +10,11 @@ def mock_create_worker_model():
         ports = []
     )
     return create_worker_model
+
+@pytest.fixture
+def mock_update_worker_model():
+    update_worker_model = UpdateWorkerModel(
+        cpu=2,
+        ram=1024
+    )
+    return update_worker_model

@@ -1,9 +1,9 @@
 from unittest.mock import MagicMock, patch
-from worker_service.__test__.mocks import mock_create_worker_model, mock_worker_service
-from database_service.__test__.mocks import mock_database_service, db_instance
-from docker_service.__test__.mocks import mock_docker_service
-from port_service.__test__.mocks import mock_port_service, mock_port_schema
-from environment_variable_service.__test__.mocks import mock_environment_variable_service, mock_environment_variable_schema
+from worker_service.__test__.mocks import *
+from database_service.__test__.mocks import *
+from docker_service.__test__.mocks import *
+from port_service.__test__.mocks import *
+from environment_variable_service.__test__.mocks import *
 import pytest
 
 @pytest.mark.asyncio
@@ -11,8 +11,16 @@ async def test_create_one(
     mock_worker_service,
     mock_create_worker_model
     ):
-    pass
     result = await mock_worker_service.create_one(mock_create_worker_model)
+    assert result.id is not None, "create worker method must return insert id"
+    assert result.name is not None, "create worker method must return insert name"
+
+@pytest.mark.asyncio
+async def test_update_one(
+    mock_worker_service,
+    mock_update_worker_model
+    ):
+    result = await mock_worker_service.update_one(1, mock_update_worker_model)
     assert result.id is not None, "create worker method must return insert id"
 
     
