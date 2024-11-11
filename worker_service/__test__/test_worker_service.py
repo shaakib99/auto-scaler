@@ -1,4 +1,3 @@
-from unittest.mock import MagicMock, patch
 from worker_service.__test__.mocks import *
 from database_service.__test__.mocks import *
 from docker_service.__test__.mocks import *
@@ -21,6 +20,11 @@ async def test_update_one(
     mock_update_worker_model
     ):
     result = await mock_worker_service.update_one(1, mock_update_worker_model)
-    assert result.id is not None, "create worker method must return insert id"
+    assert result.id is not None, "update worker method must return update id"
+
+    with pytest.raises(Exception) as e:
+        await mock_worker_service.update_one(2, mock_update_worker_model)
+        assert 404 in str(e.status_code)
+    
 
     

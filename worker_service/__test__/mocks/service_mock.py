@@ -17,8 +17,8 @@ def mock_worker_service(
     mock_environment_variable_schema
     ):
     mock_database_service.create_one = AsyncMock(return_value = mock_worker_schema)
-    mock_database_service.update_one = AsyncMock(lambda id, data: mock_worker_schema if id == 1 else None)
-    mock_database_service.get_one = AsyncMock(lambda id = mock_worker_schema.id: mock_worker_schema if id == 1 else None)
+    mock_database_service.update_one = AsyncMock(side_effect = lambda id, data: mock_worker_schema if id == 1 else None)
+    mock_database_service.get_one = AsyncMock(side_effect = lambda id = mock_worker_schema.id: mock_worker_schema if id == 1 else None)
     mock_database_service.get_all = AsyncMock(return_value = [mock_worker_schema])
 
     mock_port_service.create_one = AsyncMock(return_value = mock_port_schema)
