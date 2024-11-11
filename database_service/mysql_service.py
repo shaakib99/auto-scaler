@@ -1,9 +1,9 @@
 from .abcs import DatabaseServiceABC
 from sqlalchemy import create_engine, text
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session, DeclarativeBase, load_only, joinedload
+from sqlalchemy.orm import Session, DeclarativeBase, load_only, joinedload, declarative_base
 from pydantic import BaseModel
 from common.models import Query
+from utils.helper import is_running_test
 import os
 
 class MySQLDatabaseService(DatabaseServiceABC):
@@ -21,6 +21,12 @@ class MySQLDatabaseService(DatabaseServiceABC):
         if MySQLDatabaseService.instance is None:
             MySQLDatabaseService.instance = MySQLDatabaseService()
         return MySQLDatabaseService.instance
+
+    @staticmethod
+    def get_base():
+        if is_running_test():
+            return declarative_base()
+        return MySQLDatabaseService.get_instance().base
     
     @staticmethod
     async def connect():

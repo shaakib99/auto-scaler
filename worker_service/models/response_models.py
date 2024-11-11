@@ -13,4 +13,4 @@ class WorkerResponseModel(BaseModel):
     created_at: Optional[datetime]
     update_at: Optional[datetime]
     ports: Optional[list[PortModel]]
-    environment_variables = Optional[list[EnvironmentVariableModel]]
+    environment_variables: Optional[list[EnvironmentVariableModel]]

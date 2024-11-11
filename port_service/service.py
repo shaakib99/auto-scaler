@@ -5,8 +5,8 @@ from port_service.schema import PortSchema
 from port_service.models import CreatePortModel, UpdatePortModel
 
 class PortService(ServiceABC):
-    def __init__(self, port_model = DatabaseService[PortSchema](PortSchema)):
-        self.port_model = port_model
+    def __init__(self, port_model: DatabaseService[PortSchema]):
+        self.port_model = port_model or  DatabaseService[PortSchema](PortSchema)
     
     async def create_one(self, data: CreatePortModel):
         return await self.port_model.create_one(data)

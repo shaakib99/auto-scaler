@@ -3,7 +3,7 @@ from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Enum, Bool
 from common.enums import WorkerStatusEnum
 from datetime import datetime
 
-Base = MySQLDatabaseService.get_instance().base
+Base = MySQLDatabaseService.get_base()
 
 class WorkerSchema(Base):
     __tablename__ = "workers"
