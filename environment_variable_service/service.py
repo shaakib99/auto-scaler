@@ -5,7 +5,6 @@ from environment_variable_service.models import CreateEnvironmentVariableModel, 
 from environment_variable_service.schema import EnvironmentVariableSchema
 from database_service.service import DatabaseService
 from database_service.abcs import DatabaseServiceABC
-from worker_service.service import WorkerService 
 from worker_service.schema import WorkerSchema   
 
 
@@ -13,6 +12,9 @@ class EnvironmentVariableService(ServiceABC):
     def __init__(self, 
         environment_variable_model: DatabaseServiceABC[EnvironmentVariableSchema] = None, 
         worker_service: ServiceABC[WorkerSchema] = None):
+
+        from worker_service.service import WorkerService 
+
         self.environment_variable_model = environment_variable_model or DatabaseService[EnvironmentVariableSchema](EnvironmentVariableSchema)
         self.worker_service = worker_service or WorkerService()
 
@@ -28,7 +30,7 @@ class EnvironmentVariableService(ServiceABC):
     
     async def update_one(self, id: int | str, data: UpdateEnvironmentVariableModel):
         environ_variable = await self.get_one(id)
-        environ_variable_model = EnvironmentVariableModel.from_orm(environ_variable)
+        environ_variable_model = EnvironmentVariableModel.model_validate(environ_variable)
         environ_variable_model.key = data.key
         environ_variable_model.value = data.value
         return await self.environment_variable_model.update_one(id, environ_variable_model)

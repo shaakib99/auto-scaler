@@ -6,13 +6,15 @@ from database_service.abcs import DatabaseServiceABC
 from port_service.schema import PortSchema
 from port_service.models import CreatePortModel, UpdatePortModel, PortModel
 from worker_service.schema import WorkerSchema
-from worker_service.service import WorkerService
 from utils.helper import get_open_port
 
 class PortService(ServiceABC):
     def __init__(self, 
         port_model: DatabaseServiceABC[PortSchema] = None,
         worker_service: ServiceABC[WorkerSchema] = None):
+
+        from worker_service.service import WorkerService
+
         self.port_model = port_model or  DatabaseService[PortSchema](PortSchema)
         self.worker_service = worker_service or WorkerService()
     
@@ -29,7 +31,7 @@ class PortService(ServiceABC):
     
     async def update_one(self, id: int | str, data: UpdatePortModel):
         port = await self.get_one(id)
-        port_model = PortModel.from_orm(port)
+        port_model = PortModel.model_validate(port)
         return await self.port_model.update_one(id, port_model)
     
     async def get_one(self, id: int | str):

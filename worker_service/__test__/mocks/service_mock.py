@@ -1,5 +1,8 @@
 from database_service.__test__.mocks import *
 from docker_service.__test__.mocks import *
+from worker_service.service import WorkerService
+from port_service.__test__.mocks import *
+from environment_variable_service.__test__.mocks import *
 from unittest.mock import AsyncMock
 import pytest
 
@@ -15,8 +18,6 @@ def mock_worker_service(
     mock_database_service.update_one = AsyncMock(side_effect = lambda id, data: mock_worker_schema if id == 1 else None)
     mock_database_service.get_one = AsyncMock(side_effect = lambda id = mock_worker_schema.id: mock_worker_schema if id == 1 else None)
     mock_database_service.get_all = AsyncMock(return_value = [mock_worker_schema])
-
-    from worker_service.service import WorkerService
 
     service = WorkerService(
         worker_model=mock_database_service,

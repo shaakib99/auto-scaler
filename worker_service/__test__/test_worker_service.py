@@ -1,8 +1,6 @@
 from worker_service.__test__.mocks import *
 from database_service.__test__.mocks import *
 from docker_service.__test__.mocks import *
-from port_service.__test__.mocks import *
-from environment_variable_service.__test__.mocks import *
 import pytest
 
 @pytest.mark.asyncio

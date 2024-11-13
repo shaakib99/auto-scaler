@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 
 class PortModel(BaseModel):
@@ -7,3 +7,7 @@ class PortModel(BaseModel):
     mapped_port: Optional[int] = Field(default=None)
     port_type: Optional[str] = Field(default=None)
     is_active: Optional[bool] = Field(default=True)
+
+    model_config = ConfigDict(
+        from_attributes = True,
+    )
