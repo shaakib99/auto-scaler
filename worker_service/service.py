@@ -79,15 +79,15 @@ class WorkerService(ServiceABC):
 
         worker.container_id = container_id
         del worker.status
-        worker_data = await self.update_one(worker_data.id, worker)
+        worker_data = await self.worker_model.update_one(worker_data.id, worker)
         return worker_data
 
     
     async def update_one(self, id: int | str, data: UpdateWorkerModel):
         worker = await self.get_one(id)
         worker_model = WorkerModel.model_validate(worker)
-        worker_model.ram = data.ram
-        worker_model.cpu = data.cpu
+        for key in data.model_fields_set:
+            setattr(worker_model, key, getattr(data, key))
         return await self.worker_model.update_one(id, worker_model)
     
     async def delete_one(self, id: str | int):

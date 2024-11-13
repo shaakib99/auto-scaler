@@ -32,6 +32,8 @@ class PortService(ServiceABC):
     async def update_one(self, id: int | str, data: UpdatePortModel):
         port = await self.get_one(id)
         port_model = PortModel.model_validate(port)
+        for key in data.model_fields_set:
+            setattr(port_model, key, getattr(data, key))
         return await self.port_model.update_one(id, port_model)
     
     async def get_one(self, id: int | str):

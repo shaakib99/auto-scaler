@@ -11,9 +11,9 @@ class WorkerModel(BaseModel):
     cpu: Optional[int] = Field(default=1, description="Number cpu core")
     ram: Optional[int] = Field(default=512, description="size of ram in mb")
     is_active: Optional[bool] = Field(default=True)
-    created_at: Optional[datetime] = Field(default=datetime.now())
-    updated_at: Optional[datetime] = Field(default=datetime.now())
+    created_at: Optional[datetime] = Field(default_factory=datetime.now)
+    updated_at: Optional[datetime] = Field(default_factory=datetime.now)
 
     model_config = ConfigDict(
-        from_attributes = True,
+        from_attributes = True
     )

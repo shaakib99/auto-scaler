@@ -31,8 +31,8 @@ class EnvironmentVariableService(ServiceABC):
     async def update_one(self, id: int | str, data: UpdateEnvironmentVariableModel):
         environ_variable = await self.get_one(id)
         environ_variable_model = EnvironmentVariableModel.model_validate(environ_variable)
-        environ_variable_model.key = data.key
-        environ_variable_model.value = data.value
+        for key in data.model_fields_set:
+            setattr(environ_variable_model, key, getattr(data, key))
         return await self.environment_variable_model.update_one(id, environ_variable_model)
     
     async def get_one(self, id: int | str):
