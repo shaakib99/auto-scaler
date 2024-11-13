@@ -19,7 +19,7 @@ class EnvironmentVariableService(ServiceABC):
         self.worker_service = worker_service or WorkerService()
 
     async def create_one(self, data: CreateEnvironmentVariableModel):
-        worker = self.worker_service.get_one(data.worker_id)
+        worker = await self.worker_service.get_one(data.worker_id)
         if not worker:
             raise NotFoundException(f"worker id {data.worker_id} not found")
         environment_variable_model = EnvironmentVariableModel()

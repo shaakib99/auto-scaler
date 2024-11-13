@@ -7,4 +7,4 @@ class CreatePortModel(BaseModel):
     port_type: Optional[str] = Field(default=None)
 
 class UpdatePortModel(BaseModel):
-    pass
+    port_number: Optional[int] = Field(default=None)

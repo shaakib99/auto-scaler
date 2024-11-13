@@ -39,7 +39,7 @@ async def test_get_one(
 async def test_get_all(
     mock_worker_service,
     ):
-    result = await mock_worker_service.get_all(1)
+    result = await mock_worker_service.get_all({})
     assert len(result) > 0, "get all worker method must return at least one result"
 
 @pytest.mark.asyncio
