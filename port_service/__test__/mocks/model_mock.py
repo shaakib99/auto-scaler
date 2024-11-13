@@ -1,5 +1,5 @@
 import pytest
-from port_service.models import CreatePortModel, PortModel
+from port_service.models import CreatePortModel, PortModel, UpdatePortModel
 
 @pytest.fixture
 def mock_create_port_model():
@@ -9,6 +9,11 @@ def mock_create_port_model():
         worker_id = 1
     )
     return create_port_model
+
+@pytest.fixture
+def mock_update_port_model():
+    update_port_model = UpdatePortModel()
+    return update_port_model
 
 @pytest.fixture
 def mock_port_model():

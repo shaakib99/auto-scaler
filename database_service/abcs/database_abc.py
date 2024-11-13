@@ -2,12 +2,15 @@ from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from sqlalchemy.orm import DeclarativeBase
 from common.models import Query
-from database_service.abcs import DatabaseABC
-from typing import TypeVar, Generic
 
-T = TypeVar("T")
-class DatabaseServiceABC(ABC, Generic[T]):
-    def __init__(self, schema: DeclarativeBase, database_service:DatabaseABC):
+class DatabaseABC(ABC):
+
+    @staticmethod
+    def get_instance():
+        pass
+
+    @staticmethod
+    def get_base():
         pass
 
     @staticmethod

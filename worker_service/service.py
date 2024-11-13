@@ -11,16 +11,17 @@ from environment_variable_service.models import CreateEnvironmentVariableModel, 
 from environment_variable_service.schema import EnvironmentVariableSchema
 from environment_variable_service.service import EnvironmentVariableService
 from database_service.service import DatabaseService
+from database_service.abcs import DatabaseServiceABC
 from docker_service.service import DockerContainerService
 from docker_service.models import CreateDockerContainerModel
 import uuid
 
 class WorkerService(ServiceABC):
     def __init__(self, 
-        worker_model: DatabaseService[WorkerSchema],
-        docker_service: DockerContainerService,
-        port_service: PortService,
-        environment_variable_service: EnvironmentVariableService
+        worker_model: DatabaseServiceABC[WorkerSchema] = None,
+        docker_service: DockerContainerService = None,
+        port_service: ServiceABC[PortSchema] = None,
+        environment_variable_service: ServiceABC[EnvironmentVariableSchema] = None
         ):
         self.worker_model = worker_model or DatabaseService[WorkerSchema](WorkerSchema)
         self.port_service = port_service or PortService()
@@ -83,8 +84,11 @@ class WorkerService(ServiceABC):
 
     
     async def update_one(self, id: int | str, data: UpdateWorkerModel):
-        existing_data = await self.get_one(id)
-        return await self.worker_model.update_one(id, data)
+        worker = await self.get_one(id)
+        worker_model = WorkerModel.model_validate(worker)
+        worker_model.ram = data.ram
+        worker_model.cpu = data.cpu
+        return await self.worker_model.update_one(id, worker_model)
     
     async def delete_one(self, id: str | int):
         existing_data = await self.get_one(id)

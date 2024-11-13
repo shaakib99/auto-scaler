@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 
 class EnvironmentVariableModel(BaseModel):
@@ -6,3 +6,7 @@ class EnvironmentVariableModel(BaseModel):
     key: Optional[str] = Field(default=None)
     value: Optional[str] = Field(default=None)
     is_active: Optional[bool] = Field(default=True)
+
+    model_config = ConfigDict(
+        from_attributes = True,
+    )

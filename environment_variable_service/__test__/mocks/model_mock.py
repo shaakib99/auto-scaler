@@ -1,5 +1,5 @@
 import pytest
-from environment_variable_service.models import CreateEnvironmentVariableModel, EnvironmentVariableModel
+from environment_variable_service.models import CreateEnvironmentVariableModel, EnvironmentVariableModel, UpdateEnvironmentVariableModel
 
 @pytest.fixture
 def mock_create_environment_variable_model():
@@ -9,6 +9,14 @@ def mock_create_environment_variable_model():
         worker_id = 1
     )
     return create_environment_model
+
+@pytest.fixture
+def mock_update_environment_variable_model():
+    update_environment_model = UpdateEnvironmentVariableModel(
+        key = "TEST",
+        value = "TEST",
+    )
+    return update_environment_model
 
 @pytest.fixture
 def mock_environment_variable_model():

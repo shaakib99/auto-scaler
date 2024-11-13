@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from datetime import datetime
 from common.enums import WorkerStatusEnum
@@ -13,3 +13,7 @@ class WorkerModel(BaseModel):
     is_active: Optional[bool] = Field(default=True)
     created_at: Optional[datetime] = Field(default=datetime.now())
     updated_at: Optional[datetime] = Field(default=datetime.now())
+
+    model_config = ConfigDict(
+        from_attributes = True,
+    )
