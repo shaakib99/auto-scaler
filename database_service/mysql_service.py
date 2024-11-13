@@ -1,4 +1,4 @@
-from .abcs import DatabaseServiceABC
+from .abcs import DatabaseABC
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session, DeclarativeBase, load_only, joinedload, declarative_base
 from pydantic import BaseModel
@@ -6,7 +6,7 @@ from common.models import Query
 from utils.helper import is_running_test
 import os
 
-class MySQLDatabaseService(DatabaseServiceABC):
+class MySQLDatabaseService(DatabaseABC):
     instance = None
     def __init__(self):
         self.engine = create_engine(url=os.getenv('DB_URL'))
