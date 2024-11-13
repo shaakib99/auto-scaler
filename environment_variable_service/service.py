@@ -1,5 +1,5 @@
 from common.abcs import ServiceABC
-from environment_variable_service.models import CreateEnvironmentVariableModel, UpdateEnvironmentVariableModel
+from environment_variable_service.models import CreateEnvironmentVariableModel, UpdateEnvironmentVariableModel, EnvironmentVariableModel
 from environment_variable_service.schema import EnvironmentVariableSchema
 from database_service.service import DatabaseService
 from common.models import Query
@@ -10,10 +10,18 @@ class EnvironmentVariableService(ServiceABC):
         self.environment_variable_model = environment_variable_model or DatabaseService[EnvironmentVariableSchema](EnvironmentVariableSchema)
     
     async def create_one(self, data: CreateEnvironmentVariableModel):
-        return await self.environment_variable_model.create_one(data)
+        environment_variable_model = EnvironmentVariableModel()
+        environment_variable_model.worker_id = data.worker_id
+        environment_variable_model.key = data.key
+        environment_variable_model.value = data.value
+        return await self.environment_variable_model.create_one(environment_variable_model)
     
     async def update_one(self, id: int | str, data: UpdateEnvironmentVariableModel):
-        return await self.environment_variable_model.update_one(id, data)
+        environ_variable = await self.get_one(id)
+        environ_variable_model = EnvironmentVariableModel.model_validate(environ_variable)
+        environ_variable_model.key = data.key
+        environ_variable_model.value = data.value
+        return await self.environment_variable_model.update_one(id, environ_variable_model)
     
     async def get_one(self, id: int | str):
         return await self.environment_variable_model.get_one(id)

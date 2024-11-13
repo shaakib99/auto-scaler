@@ -83,8 +83,11 @@ class WorkerService(ServiceABC):
 
     
     async def update_one(self, id: int | str, data: UpdateWorkerModel):
-        existing_data = await self.get_one(id)
-        return await self.worker_model.update_one(id, data)
+        worker = await self.get_one(id)
+        worker_model = WorkerModel.model_validate(worker)
+        worker_model.ram = data.ram
+        worker_model.cpu = data.cpu
+        return await self.worker_model.update_one(id, worker_model)
     
     async def delete_one(self, id: str | int):
         existing_data = await self.get_one(id)
