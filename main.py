@@ -14,13 +14,13 @@ app = FastAPI(lifespan=lifespan)
 
 custom_middlewares = [{"priority": 1, "middleware": ResponseMiddleware}]
 
-for priority, middleware in sorted(custom_middlewares, key=lambda x: x["priority"]):
-    app.add_middleware(middleware)
+for middleware in sorted(custom_middlewares, key=lambda x: x["priority"]):
+    app.add_middleware(middleware["middleware"])
 
 routers: list[APIRouter] = [worker_router, port_router, environment_variable_router]
 for router in routers:
     app.include_router(router)
 
-@app.get("")
+@app.get("/")
 async def hello():
     return "hello"
