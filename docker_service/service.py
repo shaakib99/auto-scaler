@@ -8,12 +8,22 @@ class DockerContainerService:
     async def create_one(self, data: CreateDockerContainerModel) -> str:
         client = docker.from_env()
         image = client.images.pull(data.image_name)
+
+        exposed_ports = []
+        env_variables = []
+        for port in data.exposed_ports:
+            exposed_ports.append({port.port_number: port.mapped_port})
+        
+        for env_variable in data.environment_variables:
+            env_variables.append(f"{env_variable.key}={env_variable.value}")
+        
+        
         container = client.containers.run(
             image.id, 
             name = data.container_name,
             detach = True,
-            ports = data.exposed_ports,
-            environment = data.environment_variables
+            ports = exposed_ports,
+            environment = env_variables
         )
         return container.id
 
