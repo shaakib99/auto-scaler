@@ -6,10 +6,8 @@ from worker_service.schema import WorkerSchema
 from worker_service.models import CreateWorkerModel, UpdateWorkerModel, WorkerModel
 from port_service.models import CreatePortModel, PortModel
 from port_service.schema import PortSchema
-from port_service.service import PortService
 from environment_variable_service.models import CreateEnvironmentVariableModel, EnvironmentVariableModel
 from environment_variable_service.schema import EnvironmentVariableSchema
-from environment_variable_service.service import EnvironmentVariableService
 from database_service.service import DatabaseService
 from database_service.abcs import DatabaseServiceABC
 from docker_service.service import DockerContainerService
@@ -23,10 +21,24 @@ class WorkerService(ServiceABC):
         port_service: ServiceABC[PortSchema] = None,
         environment_variable_service: ServiceABC[EnvironmentVariableSchema] = None
         ):
-        self.worker_model = worker_model or DatabaseService[WorkerSchema](WorkerSchema)
-        self.port_service = port_service or PortService()
-        self.environment_variable_service = environment_variable_service or EnvironmentVariableService()
+        self.worker_model = worker_model or DatabaseService(WorkerSchema)
+        self._port_service = port_service
+        self._environment_variable_service = environment_variable_service
         self.docker_service = docker_service or DockerContainerService()
+    
+    @property
+    def port_service(self):
+        if self._port_service is None:
+            from port_service.service import PortService
+            self._port_service = PortService()
+        return self._port_service
+    
+    @property
+    def environ_variable_service(self):
+        if self._environment_variable_service is None:
+            from environment_variable_service.service import EnvironmentVariableService
+            self._environment_variable_service = EnvironmentVariableService()
+        return self._environment_variable_service
     
     async def get_one(self, id: int | str):
         data = await self.worker_model.get_one(id)

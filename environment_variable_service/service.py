@@ -13,10 +13,16 @@ class EnvironmentVariableService(ServiceABC):
         environment_variable_model: DatabaseServiceABC[EnvironmentVariableSchema] = None, 
         worker_service: ServiceABC[WorkerSchema] = None):
 
-        from worker_service.service import WorkerService 
 
-        self.environment_variable_model = environment_variable_model or DatabaseService[EnvironmentVariableSchema](EnvironmentVariableSchema)
-        self.worker_service = worker_service or WorkerService()
+        self.environment_variable_model = environment_variable_model or DatabaseService(EnvironmentVariableSchema)
+        self._worker_service = worker_service
+    
+    @property
+    def worker_service(self):
+        if self._worker_service is None:
+            from worker_service.service import WorkerService 
+            self._worker_service = WorkerService()
+        return self._worker_service
 
     async def create_one(self, data: CreateEnvironmentVariableModel):
         worker = await self.worker_service.get_one(data.worker_id)

@@ -13,10 +13,16 @@ class PortService(ServiceABC):
         port_model: DatabaseServiceABC[PortSchema] = None,
         worker_service: ServiceABC[WorkerSchema] = None):
 
-        from worker_service.service import WorkerService
 
-        self.port_model = port_model or  DatabaseService[PortSchema](PortSchema)
-        self.worker_service = worker_service or WorkerService()
+        self.port_model = port_model or  DatabaseService(PortSchema)
+        self._worker_service = worker_service
+    
+    @property
+    def worker_service(self):
+        if self._worker_service is None:
+            from worker_service.service import WorkerService
+            self._worker_service = WorkerService()
+        return self._worker_service
     
     async def create_one(self, data: CreatePortModel):
         worker = await self.worker_service.get_one(data.worker_id)

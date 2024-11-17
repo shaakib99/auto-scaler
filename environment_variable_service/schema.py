@@ -5,7 +5,7 @@ from datetime import datetime
 Base = MySQLDatabaseService.get_base()
 
 class EnvironmentVariableSchema(Base):
-    __tablename__ = "ports"
+    __tablename__ = "environment_variables"
 
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     worker_id = Column(Integer, ForeignKey('workers.id'), nullable=False)

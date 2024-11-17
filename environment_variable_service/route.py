@@ -4,7 +4,7 @@ from typing import Annotated
 from environment_variable_service.models import CreateEnvironmentVariableModel, UpdateEnvironmentVariableModel, ResponseEnvironmentVariableModel
 from environment_variable_service.service import EnvironmentVariableService
 
-router = APIRouter("/environment-variables")
+router = APIRouter(prefix="/environment-variables")
 
 environment_variable_service = EnvironmentVariableService()
 
