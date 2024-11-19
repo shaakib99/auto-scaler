@@ -4,6 +4,8 @@ from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from datetime import datetime
 from opentelemetry import trace
+from logging_service.service import LoggingService
+from logging_service.models import RequestTracingModel
 import json
 
 tracer = trace.get_tracer("auto_scaler.tracer")
@@ -37,13 +39,16 @@ class ResponseMiddleware(BaseHTTPMiddleware):
                     self.response_template["status_code"] = 500
                     self.response_template["message"] = e.__str__()
 
-            req_tracer.set_attribute("http.url", request.base_url.path)
-            req_tracer.set_attribute("http.method", request.method)
-            req_tracer.set_attribute("http.headers", json.dumps(dict(request.headers)))
-            req_tracer.set_attribute("http.body", json.dumps(request.body.__dict__ if request.method.lower() != 'get' else {}))
-            req_tracer.set_attribute("http.response", json.dumps(self.response_template))
-            req_tracer.set_attribute("http.status_code", self.response_template["status_code"])
-            req_tracer.set_attribute("http.duration", (datetime.now() - req_start_time).seconds)
+            request_tracing_model = RequestTracingModel()
+            request_tracing_model.url = request.base_url.path
+            request_tracing_model.method = request.method
+            request_tracing_model.headers_str = json.dumps(dict(request.headers))
+            request_tracing_model.body_str = json.dumps(request.body.__dict__ if request.method.lower() != 'get' else {})
+            request_tracing_model.response_str = json.dumps(self.response_template)
+            request_tracing_model.status_code = self.response_template["status_code"]
+            request_tracing_model.duration_in_second = (datetime.now() - req_start_time).seconds
+            await LoggingService.save_otel_request_data(request_tracing_model, req_tracer)
+
 
             
                     
