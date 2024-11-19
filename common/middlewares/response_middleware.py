@@ -19,7 +19,6 @@ class ResponseMiddleware(BaseHTTPMiddleware):
 
         try:
             result = await call_next(request)
-            req_duration = datetime.now() - req_start_time
             body = b""
             async for chunk in result.body_iterator:
                 body += chunk
@@ -34,6 +33,8 @@ class ResponseMiddleware(BaseHTTPMiddleware):
             else:
                 self.response_template["status_code"] = 500
                 self.response_template["message"] = e.__str__()
+        req_duration = datetime.now() - req_start_time
+        
                 
         return JSONResponse(content=self.response_template, status_code=self.response_template["status_code"])
 
