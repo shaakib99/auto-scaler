@@ -4,7 +4,7 @@ from port_service.models import CreatePortModel, UpdatePortModel, PortResponseMo
 from common.models import Query
 from typing import Annotated
 
-router = APIRouter("/ports")
+router = APIRouter(prefix="/ports")
 
 port_service = PortService()
 

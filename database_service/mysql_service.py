@@ -10,9 +10,9 @@ class MySQLDatabaseService(DatabaseABC):
     instance = None
     def __init__(self):
         self.engine = create_engine(url=os.getenv('DB_URL'))
-        self.session = Session(bind=self.engine, autoflush=False, autocommit=False)
+        self.session = Session(bind=self.engine)
         self.base = declarative_base()
-        self.base.metadata.create_all()
+        self.base.metadata.create_all(bind=self.engine)
 
     
     # using singleton pattern to create only single instance

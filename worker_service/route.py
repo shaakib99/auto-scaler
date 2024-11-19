@@ -4,7 +4,7 @@ from common.models import Query
 from worker_service.service import WorkerService
 from worker_service.models import CreateWorkerModel, WorkerModel
 
-router = APIRouter('/workers')
+router = APIRouter(prefix='/workers')
 
 worker_service = WorkerService()
 

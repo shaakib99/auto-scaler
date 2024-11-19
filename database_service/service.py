@@ -11,7 +11,7 @@ T = TypeVar("T")
 class DatabaseService(ServiceABC, Generic[T]):
     def __init__(self, schema: DeclarativeBase, database:DatabaseServiceABC = None):
         self. schema = schema
-        self.database = database or MySQLDatabaseService()
+        self.database = database or MySQLDatabaseService.get_instance()
     
     async def create_one(self, data: BaseModel) -> T:
         return await self.database.create_one(data, self.schema)
