@@ -41,7 +41,7 @@ class ResponseMiddleware(BaseHTTPMiddleware):
 
             request_tracing_model = RequestTracingModel()
             request_tracing_model.url = request.base_url.path
-            request_tracing_model.method = request.method
+            request_tracing_model.method = request.method.upper()
             request_tracing_model.headers_str = json.dumps(dict(request.headers))
             request_tracing_model.body_str = json.dumps(request.body.__dict__ if request.method.lower() != 'get' else {})
             request_tracing_model.response_str = json.dumps(self.response_template)
