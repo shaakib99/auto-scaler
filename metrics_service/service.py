@@ -48,7 +48,7 @@ class MetricsService:
         total_used_storage = total_storage_usage / (1024 ** power)
         return total_used_storage
     
-    async def generate_metrics(self, id: str):
+    async def generate_metrics(self, container_id: str):
         docker_stats = await self.docker_container_service.get_stats(id)
 
         cpu_percentage = await self.caculate_cpu_percentage_from_docker_stats(docker_stats["cpu_stats"])

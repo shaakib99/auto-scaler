@@ -22,6 +22,8 @@ class DockerContainerService:
             name = data.container_name,
             detach = True,
             ports = exposed_ports,
+            ram_limit = data.ram,
+            cpu_count = data.cpu,
             environment = env_variables
         )
         return container.id
