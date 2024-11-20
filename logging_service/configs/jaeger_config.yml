@@ -1,0 +1,7 @@
+collector:
+  app_name: jaeger-collector
+  environment: production
+  es: 
+    server-urls: <http://localhost:9200>
+    username:
+    password:

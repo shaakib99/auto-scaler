@@ -19,21 +19,21 @@ class DatabaseServiceABC(ABC, Generic[T]):
         pass
 
     @abstractmethod
-    async def create_one(self, data: BaseModel, schema: DeclarativeBase):
+    async def create_one(self, data: BaseModel, schema: DeclarativeBase) -> T:
         pass
 
     @abstractmethod
-    async def update_one(self, id: str | int, data: BaseModel, schema: DeclarativeBase):
+    async def update_one(self, id: str | int, data: BaseModel, schema: DeclarativeBase) -> T:
         pass
 
     @abstractmethod
-    async def get_one(self, id: str | int, schema: DeclarativeBase):
+    async def get_one(self, id: str | int, schema: DeclarativeBase) -> T:
         pass
 
     @abstractmethod
-    async def get_all(self, query: Query, schema: DeclarativeBase):
+    async def get_all(self, query: Query, schema: DeclarativeBase) -> list[T]:
         pass
 
     @abstractmethod
-    async def delete_one(self, id: str | int, schema: DeclarativeBase):
+    async def delete_one(self, id: str | int, schema: DeclarativeBase) -> None:
         pass

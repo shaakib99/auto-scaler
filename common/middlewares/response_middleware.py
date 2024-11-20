@@ -20,7 +20,11 @@ class ResponseMiddleware(BaseHTTPMiddleware):
         }
 
     async def dispatch(self, request: Request, call_next):
-        with tracer.start_as_current_span(f"[{request.method.upper()}] {request.base_url.path}") as req_tracer:
+        excluded_routes = ["/services"]
+        if request.url.path in excluded_routes:
+            return await call_next(request)
+            
+        with tracer.start_as_current_span(f"[{request.method.upper()}] {request.url.path}") as req_tracer:
             req_start_time = datetime.now()
             try:
                 result = await call_next(request)
@@ -41,7 +45,7 @@ class ResponseMiddleware(BaseHTTPMiddleware):
 
             request_tracing_model = RequestTracingModel()
             request_tracing_model.url = request.base_url.path
-            request_tracing_model.method = request.method
+            request_tracing_model.method = request.method.upper()
             request_tracing_model.headers_str = json.dumps(dict(request.headers))
             request_tracing_model.body_str = json.dumps(request.body.__dict__ if request.method.lower() != 'get' else {})
             request_tracing_model.response_str = json.dumps(self.response_template)

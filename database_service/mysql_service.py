@@ -12,6 +12,8 @@ class MySQLDatabaseService(DatabaseABC):
         self.engine = create_engine(url=os.getenv('DB_URL'))
         self.session = Session(bind=self.engine)
         self.base = declarative_base()
+    
+    async def create_metadata(self):
         self.base.metadata.create_all(bind=self.engine)
 
     
@@ -62,7 +64,7 @@ class MySQLDatabaseService(DatabaseABC):
             columns = [getattr(schema, field) for field in query.selected_fields]
             cursor = cursor.options(load_only(*columns))
 
-        for field in query.join:
+        for field in query.join or []:
             relationship_attr = getattr(schema, field)
             cursor = cursor.options(joinedload(relationship_attr))
 
