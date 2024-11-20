@@ -1,4 +1,7 @@
 from docker_service.service import DockerContainerService
+import requests
+import os
+import json
 
 class MetricsService:
     def __init__(self, docker_container_service:DockerContainerService = None):
@@ -60,6 +63,3 @@ class MetricsService:
         self.matric_template["storage_usage_in_gb"] = total_storage_usage
 
         return self.matric_template
-
-
-

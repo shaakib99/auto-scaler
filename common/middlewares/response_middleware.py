@@ -20,7 +20,11 @@ class ResponseMiddleware(BaseHTTPMiddleware):
         }
 
     async def dispatch(self, request: Request, call_next):
-        with tracer.start_as_current_span(f"[{request.method.upper()}] {request.base_url.path}") as req_tracer:
+        excluded_routes = ["/services"]
+        if request.url.path in excluded_routes:
+            return await call_next(request)
+            
+        with tracer.start_as_current_span(f"[{request.method.upper()}] {request.url.path}") as req_tracer:
             req_start_time = datetime.now()
             try:
                 result = await call_next(request)
