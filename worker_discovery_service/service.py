@@ -12,11 +12,13 @@ class WrokerDiscoveryService:
         query.filter_by = "status='running'"
         workers = await self.worker_service.get_all(query)
 
-        prometheus_response_model = PrometheusHTTPServiceDiscoveryResponseModel()
-        
+        result = []
         for worker in workers:
+            prometheus_response_model = PrometheusHTTPServiceDiscoveryResponseModel()
+
             host = 'host.docker.internal:8000'
-            metrics_path = f'{worker.container_id}/metrics'
+            metrics_path = f'/{worker.container_id}/metrics'
             prometheus_response_model.targets.append(host)
             prometheus_response_model.labels['__metrics_path__'] = metrics_path
-        return [prometheus_response_model]
+            result.append(prometheus_response_model)
+        return result
