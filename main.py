@@ -5,7 +5,7 @@ from port_service.route import router as port_router
 from worker_discovery_service.route import router as service_discovery_router
 from metrics_service.route import router as metrics_router
 from environment_variable_service.route import router as environment_variable_router
-from common.middlewares import ResponseMiddleware
+from common.middlewares import ResponseMiddleware, LoggingMiddleware
 from database_service.mysql_service import MySQLDatabaseService
 
 async def lifespan(app):
@@ -16,10 +16,8 @@ async def lifespan(app):
 
 app = FastAPI(lifespan=lifespan)
 
-custom_middlewares = [{"priority": 1, "middleware": ResponseMiddleware}]
-
-for middleware in sorted(custom_middlewares, key=lambda x: x["priority"]):
-    app.add_middleware(middleware["middleware"])
+app.add_middleware(LoggingMiddleware)
+app.add_middleware(ResponseMiddleware, excluded_paths = ['/services', '^/[^/]+/metrics$'])
 
 routers: list[APIRouter] = [
     worker_router, 

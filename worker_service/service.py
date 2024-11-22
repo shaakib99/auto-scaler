@@ -60,7 +60,7 @@ class WorkerService(ServiceABC):
 
         # run docker container
         create_docker_container_data = CreateDockerContainerModel(
-            image_name = "dockerhub.io/worker",
+            image_name = "dockerhub.io/shaakib99/cache-fastapi2:latest",
             container_name = worker.name
         )
         create_docker_container_data.cpu = worker.cpu

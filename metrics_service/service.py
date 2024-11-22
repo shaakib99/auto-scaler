@@ -1,16 +1,13 @@
 from docker_service.service import DockerContainerService
-import requests
-import os
-import json
-
+from prometheus_client import generate_latest, Gauge
+from fastapi.responses import Response
+from docker.errors import NotFound as DockerContainerNotFound
 class MetricsService:
     def __init__(self, docker_container_service:DockerContainerService = None):
         self.docker_container_service = docker_container_service or DockerContainerService()
-        self.matric_template = {
-            "cpu_usage_in_percent": None,
-            "ram_usage_in_percent": None,
-            "storage_usage_in_gb": None
-        }
+        self.cpu_usage_in_percentage = Gauge('cpu_usage_in_percentage', 'cpu usage per container', ["container_id"])
+        self.ram_usage_in_percentage = Gauge('ram_usage_in_percentage', 'ram usage per container', ["container_id"])
+        self.storage_usage_in_percentage = Gauge('storage_usage_in_percentage', 'storage usage per container', ["container_id"])
     
     async def caculate_cpu_percentage_from_docker_stats(stats):
         cpu_delta = (
@@ -52,14 +49,23 @@ class MetricsService:
         return total_used_storage
     
     async def generate_metrics(self, container_id: str):
-        docker_stats = await self.docker_container_service.get_stats(id)
+        if container_id == "1":
+            self.cpu_usage_in_percentage.labels(f"{container_id}").set(50)
+            self.ram_usage_in_percentage.labels(f"{container_id}").set(50)
+            self.storage_usage_in_percentage.labels(f"{container_id}").set(50)
+
+            return Response(content=generate_latest(), status_code=200)
+        docker_stats = await self.docker_container_service.get_stats(container_id)
+        if docker_stats is None: 
+            return Response(content=generate_latest(), status_code=200)
 
         cpu_percentage = await self.caculate_cpu_percentage_from_docker_stats(docker_stats["cpu_stats"])
         memory_percentage = await self.calculate_ram_percentage_from_docker_stats(docker_stats["memory_stats"])
         total_storage_usage = await self.calculate_storage_usage_from_docker_stats(docker_stats["blkio_stats"], "GB")
 
-        self.matric_template["cpu_usage_in_percent"] = cpu_percentage
-        self.matric_template["ram_usage_in_percent"] = memory_percentage
-        self.matric_template["storage_usage_in_gb"] = total_storage_usage
+        self.cpu_usage_in_percentage.labels(f"{container_id}").set(cpu_percentage)
+        self.ram_usage_in_percentage.labels(f"{container_id}").set(memory_percentage)
+        self.storage_usage_in_percentage.labels(f"{container_id}").set(total_storage_usage)
 
-        return self.matric_template
+        return Response(content=generate_latest(), status_code=200)
+
