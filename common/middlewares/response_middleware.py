@@ -2,10 +2,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi import HTTPException
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
-from datetime import datetime
 from opentelemetry import trace
-from logging_service.service import LoggingService
-from logging_service.models import RequestTracingModel
 import json
 import re
 
