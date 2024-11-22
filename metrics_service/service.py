@@ -1,7 +1,7 @@
 from docker_service.service import DockerContainerService
 from prometheus_client import generate_latest, Gauge
 from fastapi.responses import Response
-from docker.errors import NotFound as DockerContainerNotFound
+
 class MetricsService:
     def __init__(self, docker_container_service:DockerContainerService = None):
         self.docker_container_service = docker_container_service or DockerContainerService()
