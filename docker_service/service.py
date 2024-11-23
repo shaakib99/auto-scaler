@@ -27,16 +27,28 @@ class DockerContainerService:
             environment = env_variables
         )
         return container.id
+    
+    async def get_one(self, id: str):
+        try:
+            self.client.containers.get(id)
+        except docker.errors.NotFound:
+            return
 
     async def stop_one(self, id: str):
-        container = self.client.containers.get(id)
+        container = await self.get_one(id)
+        if container is None: 
+            return None
         container.stop()
         return container.id
 
     async def remove_one(self, name: str):
-        container = self.client.containers.get(id)
+        container = await self.get_one(id)
+        if container is None:
+            return None
         container.remove()
     
     async def get_stats(self, id: str):
-        container = self.client.containers.get(id)
+        container = await self.get_one(id)
+        if container is None:
+            return None
         return container.stats(stream=False)
