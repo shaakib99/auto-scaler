@@ -1,0 +1,11 @@
+groups:
+  - name: High Resource Usage
+  - rules:
+    alert: "high_resource_usage"
+    expr: cpu_usage_in_percentage{job="monitor_servers"} >= 80 or ram_usage_in_percentage{job="monitor_servers"} >= 80
+    for: 2m
+    keep_firing_for: 5m
+    labels:
+      severity: critical
+    annotations:
+      instance: "{{$labels.container_id}}"
