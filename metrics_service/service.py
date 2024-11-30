@@ -49,12 +49,18 @@ class MetricsService:
         return total_used_storage
     
     async def generate_metrics(self, container_id: str):
-        if container_id == "1":
-            self.cpu_usage_in_percentage.labels(f"{container_id}").set(50)
-            self.ram_usage_in_percentage.labels(f"{container_id}").set(50)
-            self.storage_usage_in_percentage.labels(f"{container_id}").set(50)
+        # if container_id == "1":
+        #     return Response(content=None, status_code=500)
+        #     self.cpu_usage_in_percentage.labels(f"{container_id}").set(50)
+        #     self.ram_usage_in_percentage.labels(f"{container_id}").set(50)
+        #     self.storage_usage_in_percentage.labels(f"{container_id}").set(50)
+        
+        # if container_id == "2":
+        #     self.cpu_usage_in_percentage.labels(f"{container_id}").set(50)
+        #     self.ram_usage_in_percentage.labels(f"{container_id}").set(50)
+        #     self.storage_usage_in_percentage.labels(f"{container_id}").set(50)
+        #     return Response(content=generate_latest(), status_code=200)
 
-            return Response(content=generate_latest(), status_code=200)
         docker_stats = await self.docker_container_service.get_stats(container_id)
         if docker_stats is None: 
             return Response(content=generate_latest(), status_code=200)

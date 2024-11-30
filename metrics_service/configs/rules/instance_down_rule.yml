@@ -1,0 +1,11 @@
+groups:
+  - name: Instance Down
+    rules:
+    - alert: instance_down
+      expr: up{job="monitor_servers"} == 0
+      for: 2m
+      keep_firing_for: 5m
+      labels:
+        severity: critical
+      annotations:
+        instance: "{{$labels.container_id}}"

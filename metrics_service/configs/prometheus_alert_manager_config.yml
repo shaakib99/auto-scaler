@@ -1,0 +1,23 @@
+route:
+  routes:
+    - receiver: "clone-worker"
+      matchers:
+        - alertname="high_resource_usage"
+    
+    - receiver: "remove-worker"
+      matchers:
+        - alertname="low_resource_usage"
+    
+    - receiver: "alert-instance-down"
+      matchers:
+        - alertname="instance_down"
+
+receivers:
+  - name: "clone-worker"
+    webhook_configs:
+      - url: http://localhost:8000/{{$annotations.instance}}/clone
+
+  - name: "alert-instance-down"
+    webhook_configs:
+      - url: http://localhost:8000/{{$annotations.instance}}/remove
+    
