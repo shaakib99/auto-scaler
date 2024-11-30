@@ -41,7 +41,7 @@ class DockerContainerService:
         container.stop()
         return container.id
 
-    async def remove_one(self, name: str):
+    async def remove_one(self, id: str):
         container = await self.get_one(id)
         if container is None:
             return None
