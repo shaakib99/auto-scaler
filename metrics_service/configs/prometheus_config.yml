@@ -5,7 +5,7 @@ global:
 rule_files:
   - instance_down_rule.yml
   - high_resource_usage_rule.yml
-  - "low_resource_usage_rule.yml"
+  - low_resource_usage_rule.yml
 
 
 alerting:

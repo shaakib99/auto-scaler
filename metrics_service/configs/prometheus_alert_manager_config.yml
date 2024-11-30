@@ -1,0 +1,10 @@
+route:
+  routes:
+    - receiver: "clone-worker"
+      matchers:
+        - alertname="high_resource_usage"
+
+receivers:
+  - name: "clone-worker"
+    webhook_configs:
+      - url: http://localhost:8000/{{$annotations.instance}}/clone
