@@ -1,11 +1,11 @@
 groups:
   - name: Low Resource Usage
-  - rules:
-    alert: "low_resource_usage"
-    expr: cpu_usage_in_percentage{job="monitor_servers"} < 20 and ram_usage_in_percentage{job="monitor_servers"} < 20
-    for: 5m
-    keep_firing_for: 5m
-    labels:
-      severity: page
-    annotations:
-      instance: "{{$labels.container_id}}"
+    rules:
+    - alert: low_resource_usage
+      expr: cpu_usage_in_percentage{job="monitor_servers"} < 20 and ram_usage_in_percentage{job="monitor_servers"} < 20
+      for: 5m
+      keep_firing_for: 5m
+      labels:
+        severity: page
+      annotations:
+        instance: "{{$labels.container_id}}"
