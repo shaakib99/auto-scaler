@@ -1,6 +1,7 @@
 from worker_service.__test__.mocks import *
 from database_service.__test__.mocks import *
 from docker_service.__test__.mocks import *
+from unittest.mock import AsyncMock
 import pytest
 
 @pytest.mark.asyncio
@@ -45,7 +46,11 @@ async def test_get_all(
 @pytest.mark.asyncio
 async def test_delete_one(
     mock_worker_service,
+    mock_worker_schema
     ):
+    mock_worker_schema.is_cloned = True
+    mock_worker_schema.parent_id = 1
+    mock_worker_service.get_one = AsyncMock(return_value = mock_worker_schema)
     result = await mock_worker_service.delete_one(1)
     assert result is None, "get all worker method must delete"
 

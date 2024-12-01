@@ -12,6 +12,8 @@ def mock_worker_schema():
     worker_schema.cpu = 1
     worker_schema.ram = 512
     worker_schema.status = WorkerStatusEnum.INIT
+    worker_schema.parent_id = None
+    worker_schema.is_cloned = False
     worker_schema.is_active = True
     worker_schema.created_at = datetime.now()
     worker_schema.updated_at = datetime.now()

@@ -1,7 +1,7 @@
 from common.abcs import ServiceABC
 from common.models import Query
 from common.enums import WorkerStatusEnum
-from common.exceptions import NotFoundException
+from common.exceptions import NotFoundException, BadRequestException
 from worker_service.schema import WorkerSchema
 from worker_service.models import CreateWorkerModel, UpdateWorkerModel, WorkerModel
 from port_service.models import CreatePortModel, PortModel, CreatePortWithWorkerModel
@@ -103,7 +103,11 @@ class WorkerService(ServiceABC):
         return await self.worker_model.update_one(id, worker_model)
     
     async def delete_one(self, id: str | int):
-        existing_data = await self.get_one(id)
+        worker = await self.get_one(id)
+        if worker.is_cloned is False:
+            raise BadRequestException(f'{id} is not a cloned worker')
+
+        await self.docker_service.remove_one(worker.container_id)
         return await self.worker_model.delete_one(id)
     
     async def clone_worker(self, id: str | int):
