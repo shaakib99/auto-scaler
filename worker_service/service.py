@@ -110,7 +110,9 @@ class WorkerService(ServiceABC):
         worker = await self.get_one(id)
         create_worker_model = CreateWorkerModel(
             cpu = worker.cpu,
-            ram = worker.ram
+            ram = worker.ram,
+            parent_id = worker.id,
+            is_cloned = True
         )
 
         ports = await self.port_service.get_all(Query(filter_by=f"worker_id={worker.id}", limit=100000))
@@ -131,5 +133,4 @@ class WorkerService(ServiceABC):
             create_worker_model.environment_variables.append(create_environment_variable_model)
         
         result = await self.create_one(create_worker_model)
-        # Send an event
         return result
