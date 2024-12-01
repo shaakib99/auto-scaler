@@ -4,9 +4,9 @@ from common.enums import WorkerStatusEnum
 from common.exceptions import NotFoundException
 from worker_service.schema import WorkerSchema
 from worker_service.models import CreateWorkerModel, UpdateWorkerModel, WorkerModel
-from port_service.models import CreatePortModel, PortModel
+from port_service.models import CreatePortModel, PortModel, CreatePortWithWorkerModel
 from port_service.schema import PortSchema
-from environment_variable_service.models import CreateEnvironmentVariableModel, EnvironmentVariableModel
+from environment_variable_service.models import CreateEnvironmentVariableModel, EnvironmentVariableModel, CreateEnvironmentVariableWithWorkerModel
 from environment_variable_service.schema import EnvironmentVariableSchema
 from database_service.service import DatabaseService
 from database_service.abcs import DatabaseServiceABC
@@ -106,3 +106,30 @@ class WorkerService(ServiceABC):
         existing_data = await self.get_one(id)
         return await self.worker_model.delete_one(id)
     
+    async def clone_worker(self, id: str | int):
+        worker = await self.get_one(id)
+        create_worker_model = CreateWorkerModel(
+            cpu = worker.cpu,
+            ram = worker.ram
+        )
+
+        ports = await self.port_service.get_all(Query(filter_by=f"worker_id={worker.id}", limit=100000))
+        environment_variables = await self.environ_variable_service.get_all(Query(filter_by=f"worker_id={worker.id}", limit=100000))
+
+        for port in ports:
+            create_port_model = CreatePortWithWorkerModel(
+                port = port.port_number,
+                port_type = port.port_type
+            )
+            create_worker_model.ports.append(create_port_model)
+        
+        for environment_variable in environment_variables:
+            create_environment_variable_model = CreateEnvironmentVariableWithWorkerModel(
+                key = environment_variable.key,
+                value = environment_variable.value
+            )
+            create_worker_model.environment_variables.append(create_environment_variable_model)
+        
+        result = await self.create_one(create_worker_model)
+        # Send an event
+        return result

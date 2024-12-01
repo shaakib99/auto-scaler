@@ -8,6 +8,10 @@ router = APIRouter(prefix='/workers')
 
 worker_service = WorkerService()
 
+@router.post('/clone')
+async def clone_worker(id: int | str):
+    return await worker_service.clone_worker(id)
+
 @router.get('/{id}', status_code=200, response_model=WorkerModel, response_model_exclude_none=True)
 async def get_one(id: int | str):
     return await worker_service.get_one(id)
