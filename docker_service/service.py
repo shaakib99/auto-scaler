@@ -1,5 +1,4 @@
 from docker_service.models import CreateDockerContainerModel
-from docker.types import HostConfig
 import docker
 
 class DockerContainerService:

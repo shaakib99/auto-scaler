@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from typing import Annotated
 from common.models import Query
 from worker_service.service import WorkerService
-from worker_service.models import CreateWorkerModel, WorkerModel, WorkerResponseModel
+from worker_service.models import CreateWorkerModel, WorkerResponseModel
 
 router = APIRouter(prefix='/workers')
 
