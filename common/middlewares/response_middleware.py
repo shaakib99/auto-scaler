@@ -12,17 +12,18 @@ class ResponseMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, excluded_paths: list[str] = []):
         super().__init__(app)
         self.excluded_paths = excluded_paths
-        self.response_template = {
-            "status_code": None,
-            "data": None,
-            "message": None
-        }
+        
 
     async def dispatch(self, request: Request, call_next):   
         for excluded_path_pattern in self.excluded_paths:
             if re.match(excluded_path_pattern, request.url.path):
-                return await call_next(request)      
-
+                return await call_next(request)   
+        response_template = {
+            "status_code": None,
+            "data": None,
+            "message": None
+        }   
+        headers = {}
         try:
             result = await call_next(request)
 
@@ -31,18 +32,19 @@ class ResponseMiddleware(BaseHTTPMiddleware):
                 body += chunk
             body_text = body.decode("utf-8")
             if 200 <= result.status_code < 300: 
-                self.response_template["data"] = json.loads(body_text) if body_text else None
+                response_template["data"] = json.loads(body_text) if body_text else None
             else:
-                self.response_template["message"] = json.loads(body_text)["detail"]
+                response_template["message"] = json.loads(body_text)["detail"]
 
-            self.response_template["status_code"] = result.status_code
+            response_template["status_code"] = result.status_code
+            headers = result.headers
         except Exception as e:
             if isinstance(e, HTTPException):
-                self.response_template["status_code"] = e.status_code
-                self.response_template["message"] = e.message
+                response_template["status_code"] = e.status_code
+                response_template["message"] = e.message
             else:
-                self.response_template["status_code"] = 500
-                self.response_template["message"] = e.__str__()
+                response_template["status_code"] = 500
+                response_template["message"] = e.__str__()
 
-        return JSONResponse(content=self.response_template, status_code=self.response_template["status_code"])
+        return JSONResponse(content=response_template, status_code=response_template["status_code"], headers=headers)
 
