@@ -9,6 +9,7 @@ from database_service.mysql_service import MySQLDatabaseService
 from worker_service.schema import WorkerSchema
 from port_service.schema import PortSchema
 from environment_variable_service.schema import EnvironmentVariableSchema
+import os
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -43,6 +44,8 @@ def run_migrations_offline() -> None:
 
     """
     url = config.get_main_option("sqlalchemy.url")
+    url = os.getenv("DB_URL")
+
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -61,11 +64,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    connectable = MySQLDatabaseService.get_instance().engine
 
     with connectable.connect() as connection:
         context.configure(
