@@ -30,7 +30,10 @@ class ResponseMiddleware(BaseHTTPMiddleware):
             async for chunk in result.body_iterator:
                 body += chunk
             body_text = body.decode("utf-8")
-            self.response_template["data"] = json.loads(body_text) if body_text else None
+            if 200 <= result.status_code < 300: 
+                self.response_template["data"] = json.loads(body_text) if body_text else None
+            else:
+                self.response_template["message"] = json.loads(body_text)["detail"]
 
             self.response_template["status_code"] = result.status_code
         except Exception as e:

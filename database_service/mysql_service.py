@@ -56,7 +56,7 @@ class MySQLDatabaseService(DatabaseABC):
         return data_model
 
     async def get_one(self, id, schema: DeclarativeBase):
-        return self.session.get_one(schema, id)
+        return self.session.get(schema, id)
 
     async def get_all(self, query: Query, schema: DeclarativeBase):
         cursor = self.session.query(schema)

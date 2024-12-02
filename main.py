@@ -16,8 +16,8 @@ async def lifespan(app):
 
 app = FastAPI(lifespan=lifespan)
 
-app.add_middleware(LoggingMiddleware)
 app.add_middleware(ResponseMiddleware, excluded_paths = ['/services', '^/[^/]+/metrics$'])
+app.add_middleware(LoggingMiddleware)
 
 routers: list[APIRouter] = [
     worker_router, 

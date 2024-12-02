@@ -43,7 +43,7 @@ class WorkerService(ServiceABC):
     async def get_one(self, id: int | str):
         data = await self.worker_model.get_one(id)
         if not data:
-            raise NotFoundException(f"{id} not found")
+            raise NotFoundException(f"{id=} not found")
         return data
     
     async def get_all(self, query: Query):
