@@ -10,7 +10,7 @@ class WorkerSchema(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     name = Column(String(255), nullable=False)
-    container_id = Column(String(255), nullable=False)
+    container_id = Column(String(255), nullable=True)
     ram = Column(Integer, nullable=False, default=512)
     cpu = Column(Integer, nullable=False, default=1)
     status = Column(Enum(WorkerStatusEnum), default=WorkerStatusEnum.INIT)

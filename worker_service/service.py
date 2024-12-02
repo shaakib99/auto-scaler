@@ -54,13 +54,13 @@ class WorkerService(ServiceABC):
         worker.cpu = data.cpu
         worker.ram = data.ram
         worker.name = f"worker-{uuid.uuid4().__str__()}"
-        worker.status = WorkerStatusEnum.INIT
+        worker.status = WorkerStatusEnum.INIT.value
 
         worker_data = await self.worker_model.create_one(worker)
 
         # run docker container
         create_docker_container_data = CreateDockerContainerModel(
-            image_name = "dockerhub.io/shaakib99/cache-fastapi2:latest",
+            image_name = "shaakib99/cache-fastapi2:latest",
             container_name = worker.name
         )
         create_docker_container_data.cpu = worker.cpu
@@ -90,7 +90,7 @@ class WorkerService(ServiceABC):
         container_id = await self.docker_service.create_one(create_docker_container_data)
 
         worker.container_id = container_id
-        del worker.status
+        worker.status = WorkerStatusEnum.RUNNING.value
         worker_data = await self.worker_model.update_one(worker_data.id, worker)
         return worker_data
 

@@ -49,10 +49,12 @@ class MySQLDatabaseService(DatabaseABC):
         return data_model
 
     async def update_one(self, id, data: BaseModel, schema: DeclarativeBase):
-        data_model = self.get_one(id, schema)
-        for key, value in data.model_dump():
+        data_model = await self.get_one(id, schema)
+        data_model.id = id
+        for key, value in data.model_dump(exclude_unset=True).items():
             setattr(data_model, key, value)
         self.session.commit()
+        self.session.flush()
         return data_model
 
     async def get_one(self, id, schema: DeclarativeBase):
