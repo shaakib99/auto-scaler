@@ -6,6 +6,10 @@ class CreateEnvironmentVariableModel(BaseModel):
     key: str
     value: str
 
+class CreateEnvironmentVariableWithWorkerModel(BaseModel):
+    key: str
+    value: str
+
 class UpdateEnvironmentVariableModel(BaseModel):
     key: Optional[str]
     value: Optional[str]

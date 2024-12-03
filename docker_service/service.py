@@ -1,4 +1,5 @@
 from docker_service.models import CreateDockerContainerModel
+from docker.types import HostConfig
 import docker
 
 class DockerContainerService:
@@ -22,9 +23,9 @@ class DockerContainerService:
             name = data.container_name,
             detach = True,
             ports = exposed_ports,
-            ram_limit = data.ram,
-            cpu_count = data.cpu,
-            environment = env_variables
+            environment = env_variables,
+            mem_limit=data.ram * 1024 * 1024,  # Convert MB to bytes
+            nano_cpus=int(data.cpu * 1e9),  # Convert CPU count to nanoseconds
         )
         return container.id
     

@@ -27,5 +27,5 @@ receivers:
 
   - name: "alert-instance-down"
     webhook_configs:
-      - url: http://host.docker.internal:8000/remove
+      - url: http://host.docker.internal:8000/worker/remove
     
