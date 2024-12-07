@@ -3,8 +3,21 @@ from cache_service.abcs.cache_abc import CacheABC
 import os
 
 class RedisCache(CacheABC):
+    instance = None
     def __init__(self):
         self.redis = Redis(host=os.getenv('REDIS_HOST', 'localhost'), port=os.getenv('REDIS_PORT', 6379), db=os.getenv('REDIS_DB', 'cache_db'))
+    
+    @staticmethod
+    def get_instance():
+        if RedisCache.instance is None:
+            RedisCache.instance = RedisCache()
+        return RedisCache.instance
+    
+    async def connect(self):
+        self.redis.ping()
+    
+    async def disconnect(self):
+        self.redis.close()
 
     async def get(self, key: str):
         return self.redis.hget(key)
