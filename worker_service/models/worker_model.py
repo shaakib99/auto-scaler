@@ -10,6 +10,8 @@ class WorkerModel(BaseModel):
     status: Optional[str] = Field(default=WorkerStatusEnum.INIT)
     cpu: Optional[int] = Field(default=1, description="Number cpu core")
     ram: Optional[int] = Field(default=512, description="size of ram in mb")
+    parent_id: Optional[int] = Field(default=None)
+    is_cloned: Optional[bool] = Field(default=False)
     is_active: Optional[bool] = Field(default=True)
     created_at: Optional[datetime] = Field(default_factory=datetime.now)
     updated_at: Optional[datetime] = Field(default_factory=datetime.now)

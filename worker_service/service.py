@@ -1,12 +1,12 @@
 from common.abcs import ServiceABC
 from common.models import Query
 from common.enums import WorkerStatusEnum
-from common.exceptions import NotFoundException
+from common.exceptions import NotFoundException, BadRequestException
 from worker_service.schema import WorkerSchema
 from worker_service.models import CreateWorkerModel, UpdateWorkerModel, WorkerModel
-from port_service.models import CreatePortModel, PortModel
+from port_service.models import CreatePortModel, PortModel, CreatePortWithWorkerModel
 from port_service.schema import PortSchema
-from environment_variable_service.models import CreateEnvironmentVariableModel, EnvironmentVariableModel
+from environment_variable_service.models import CreateEnvironmentVariableModel, EnvironmentVariableModel, CreateEnvironmentVariableWithWorkerModel
 from environment_variable_service.schema import EnvironmentVariableSchema
 from database_service.service import DatabaseService
 from database_service.abcs import DatabaseServiceABC
@@ -43,7 +43,7 @@ class WorkerService(ServiceABC):
     async def get_one(self, id: int | str):
         data = await self.worker_model.get_one(id)
         if not data:
-            raise NotFoundException(f"{id} not found")
+            raise NotFoundException(f"{id=} not found")
         return data
     
     async def get_all(self, query: Query):
@@ -54,13 +54,13 @@ class WorkerService(ServiceABC):
         worker.cpu = data.cpu
         worker.ram = data.ram
         worker.name = f"worker-{uuid.uuid4().__str__()}"
-        worker.status = WorkerStatusEnum.INIT
+        worker.status = WorkerStatusEnum.INIT.value
 
         worker_data = await self.worker_model.create_one(worker)
 
         # run docker container
         create_docker_container_data = CreateDockerContainerModel(
-            image_name = "dockerhub.io/shaakib99/cache-fastapi2:latest",
+            image_name = "shaakib99/cache-fastapi2:latest",
             container_name = worker.name
         )
         create_docker_container_data.cpu = worker.cpu
@@ -90,7 +90,7 @@ class WorkerService(ServiceABC):
         container_id = await self.docker_service.create_one(create_docker_container_data)
 
         worker.container_id = container_id
-        del worker.status
+        worker.status = WorkerStatusEnum.RUNNING.value
         worker_data = await self.worker_model.update_one(worker_data.id, worker)
         return worker_data
 
@@ -103,6 +103,38 @@ class WorkerService(ServiceABC):
         return await self.worker_model.update_one(id, worker_model)
     
     async def delete_one(self, id: str | int):
-        existing_data = await self.get_one(id)
+        worker = await self.get_one(id)
+        if worker.is_cloned is False:
+            raise BadRequestException(f'{id} is not a cloned worker')
+
+        await self.docker_service.remove_one(worker.container_id)
         return await self.worker_model.delete_one(id)
     
+    async def clone_worker(self, id: str | int):
+        worker = await self.get_one(id)
+        create_worker_model = CreateWorkerModel(
+            cpu = worker.cpu,
+            ram = worker.ram,
+            parent_id = worker.id,
+            is_cloned = True
+        )
+
+        ports = await self.port_service.get_all(Query(filter_by=f"worker_id={worker.id}", limit=100000))
+        environment_variables = await self.environ_variable_service.get_all(Query(filter_by=f"worker_id={worker.id}", limit=100000))
+
+        for port in ports:
+            create_port_model = CreatePortWithWorkerModel(
+                port = port.port_number,
+                port_type = port.port_type
+            )
+            create_worker_model.ports.append(create_port_model)
+        
+        for environment_variable in environment_variables:
+            create_environment_variable_model = CreateEnvironmentVariableWithWorkerModel(
+                key = environment_variable.key,
+                value = environment_variable.value
+            )
+            create_worker_model.environment_variables.append(create_environment_variable_model)
+        
+        result = await self.create_one(create_worker_model)
+        return result

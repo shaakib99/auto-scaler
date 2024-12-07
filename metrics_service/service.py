@@ -63,7 +63,7 @@ class MetricsService:
 
         docker_stats = await self.docker_container_service.get_stats(container_id)
         if docker_stats is None: 
-            return Response(content=generate_latest(), status_code=200)
+            return Response(content=None, status_code=404)
 
         cpu_percentage = await self.caculate_cpu_percentage_from_docker_stats(docker_stats["cpu_stats"])
         memory_percentage = await self.calculate_ram_percentage_from_docker_stats(docker_stats["memory_stats"])

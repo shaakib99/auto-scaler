@@ -1,4 +1,6 @@
 route:
+  receiver: 'default-receiver'
+
   routes:
     - receiver: "clone-worker"
       matchers:
@@ -13,11 +15,17 @@ route:
         - alertname="instance_down"
 
 receivers:
+  - name: "default-receiver"
+
   - name: "clone-worker"
     webhook_configs:
-      - url: http://localhost:8000/{{$annotations.instance}}/clone
+      - url: http://host.docker.internal:8000/worker/clone
+
+  - name: "remove-worker"
+    webhook_configs:
+      - url: http://host.docker.internal:8000/worker/remove
 
   - name: "alert-instance-down"
     webhook_configs:
-      - url: http://localhost:8000/{{$annotations.instance}}/remove
+      - url: http://host.docker.internal:8000/worker/remove
     

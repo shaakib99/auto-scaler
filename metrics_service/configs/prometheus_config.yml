@@ -9,6 +9,10 @@ rule_files:
 
 
 alerting:
+  alertmanagers:
+    - static_configs:
+      - targets:
+        - host.docker.internal:9093
 
 
 scrape_configs:

@@ -33,10 +33,12 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             request_tracing_model.duration_in_second = (datetime.now() - req_start_time).seconds
             await LoggingService.save_otel_request_data(request_tracing_model, req_tracer)
 
-            return Response(
+            resp = Response(
                 content=response,
                 status_code=result.status_code,
                 headers=dict(result.headers),
                 media_type=result.media_type,
             )
+            resp.headers["Content-Length"] = str(len(response.encode(result.charset or 'utf-8')))
+            return resp
 

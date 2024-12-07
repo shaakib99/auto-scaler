@@ -13,24 +13,24 @@ class WrokerDiscoveryService:
         workers = await self.worker_service.get_all(query)
 
         result = []
-        # prometheus_response_model = PrometheusHTTPServiceDiscoveryResponseModel()
+        prometheus_response_model = PrometheusHTTPServiceDiscoveryResponseModel()
 
-        # host = 'host.docker.internal:8000'
-        # metrics_path = f'/{1}/metrics'
-        # prometheus_response_model.targets.append(host)
-        # prometheus_response_model.labels['__metrics_path__'] = metrics_path
-        # prometheus_response_model.labels['container_id'] = "1"
-        # result.append(prometheus_response_model)
+        host = 'host.docker.internal:8000'
+        metrics_path = f'/{1}/metrics'
+        prometheus_response_model.targets.append(host)
+        prometheus_response_model.labels['__metrics_path__'] = metrics_path
+        prometheus_response_model.labels['container_id'] = "1"
+        result.append(prometheus_response_model)
 
 
-        # prometheus_response_model = PrometheusHTTPServiceDiscoveryResponseModel()
+        prometheus_response_model = PrometheusHTTPServiceDiscoveryResponseModel()
 
-        # host = 'host.docker.internal:8000'
-        # metrics_path = f'/{2}/metrics'
-        # prometheus_response_model.targets.append(host)
-        # prometheus_response_model.labels['__metrics_path__'] = metrics_path
-        # prometheus_response_model.labels['container_id'] = "2"
-        # result.append(prometheus_response_model)
+        host = 'host.docker.internal:8000'
+        metrics_path = f'/{2}/metrics'
+        prometheus_response_model.targets.append(host)
+        prometheus_response_model.labels['__metrics_path__'] = metrics_path
+        prometheus_response_model.labels['container_id'] = "2"
+        result.append(prometheus_response_model)
 
 
 

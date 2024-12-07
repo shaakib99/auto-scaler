@@ -7,17 +7,20 @@ from metrics_service.route import router as metrics_router
 from environment_variable_service.route import router as environment_variable_router
 from common.middlewares import ResponseMiddleware, LoggingMiddleware
 from database_service.mysql_service import MySQLDatabaseService
+from cache_service.redis_cache import RedisCache
 
 async def lifespan(app):
     # load env
     load_dotenv()
     await MySQLDatabaseService.get_instance().create_metadata()
+    await RedisCache.get_instance().connect()
     yield
+    await RedisCache.get_instance().disconnect()
 
 app = FastAPI(lifespan=lifespan)
 
-app.add_middleware(LoggingMiddleware)
 app.add_middleware(ResponseMiddleware, excluded_paths = ['/services', '^/[^/]+/metrics$'])
+app.add_middleware(LoggingMiddleware)
 
 routers: list[APIRouter] = [
     worker_router, 
