@@ -5,7 +5,7 @@ import os
 class RedisCache(CacheABC):
     instance = None
     def __init__(self):
-        self.redis = Redis(host=os.getenv('REDIS_HOST', 'localhost'), port=os.getenv('REDIS_PORT', 6379), db=os.getenv('REDIS_DB', 'cache_db'))
+        self.redis = Redis(host=os.getenv('REDIS_HOST', 'localhost'), port=os.getenv('REDIS_PORT', 6379))
     
     @staticmethod
     def get_instance():
@@ -20,10 +20,10 @@ class RedisCache(CacheABC):
         self.redis.close()
 
     async def get(self, key: str):
-        return self.redis.hget(key)
+        return self.redis.get(key)
 
     async def set(self, key: str, value: dict, expire=None):
-        self.redis.hset(key, value.__str__())
+        self.redis.set(key, value.__str__())
     
     async def delete(self, key):
-        return self.redis.hdel(key)
+        return self.redis.delete(key)

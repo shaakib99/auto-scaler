@@ -3,7 +3,7 @@ from cache_service.abcs.cache_abc import CacheABC
 
 class CacheService:
     def __init__(self, cache: CacheABC = None):
-        self.cache_service = cache or RedisCache()
+        self.cache_service = cache or RedisCache.get_instance()
     
     async def get(self, key: str):
         return await self.cache_service.get(key)

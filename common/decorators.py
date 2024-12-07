@@ -1,22 +1,29 @@
 from functools import wraps
 from cache_service.service import CacheService
 from pydantic import BaseModel
+from sqlalchemy.orm import DeclarativeBase
+from database_service.mysql_service import MySQLDatabaseService
+from hashlib import md5
+import json
+
+Base = MySQLDatabaseService.get_base() 
 
 def cache(key: str):
     def decorator(func):
         @wraps(func)
         async def wrapper(*args, **kwargs):
             cache_service = CacheService()
-            result = await cache_service.get(key)
+            new_key = md5(key.format(*args, **kwargs).encode('utf-8')).hexdigest()
+            result: bytes = await cache_service.get(new_key)
             if result is not None: 
-                return result
+                return json.loads(result.decode('utf-8'))
             
             result = await func(*args, **kwargs)
-
-            if isinstance(result, BaseModel):
-                await cache_service.set(key, result.model_dump().__str__())
+            if isinstance(result, Base):
+                result_dict = {k: v for k, v in result.__dict__.items() if not k.startswith('_')}
+                await cache_service.set(new_key, json.dumps(result_dict, default=str))
             else:
-                await cache_service.set(key, str(result))
+                await cache_service.set(new_key, json.dumps(result_dict, default=str))
 
             return result
         return wrapper
