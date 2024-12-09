@@ -2,7 +2,7 @@ from worker_service.service import WorkerService
 from worker_discovery_service.models import PrometheusHTTPServiceDiscoveryResponseModel
 from common.models import Query
 
-class WrokerDiscoveryService:
+class WorkerDiscoveryService:
     def __init__(self, worker_service: WorkerService = None):
         self.worker_service = worker_service or WorkerService()
 
