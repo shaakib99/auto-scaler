@@ -3,9 +3,8 @@ from typing import Annotated
 from common.models import Query
 from worker_service.service import WorkerService
 from worker_service.models import CreateWorkerModel, WorkerResponseModel
-from common.decorators import cache, UseGuard
+from common.decorators import cache
 from common.enums import CacheKeysEnum
-from rate_limiter_service.guard import RateLimiterGuard
 
 router = APIRouter(prefix='/workers')
 
@@ -16,7 +15,6 @@ async def clone_worker(id: int | str):
     return await worker_service.clone_worker(id)
 
 @router.get('/{id}', status_code=200, response_model=WorkerResponseModel, response_model_exclude_none=True)
-@UseGuard(RateLimiterGuard())
 @cache(CacheKeysEnum.WORKER_GET_ONE.value)
 async def get_one(id: int | str, request: Request):
     return await worker_service.get_one(id)
