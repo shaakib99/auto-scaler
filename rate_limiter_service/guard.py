@@ -1,6 +1,7 @@
 from rate_limiter_service.service import RateLimiterService
+from common.abcs import GuardABC
 
-class RateLimiterGuard:
+class RateLimiterGuard(GuardABC):
     def __init__(self, rate_limiter_service: "RateLimiterService" = RateLimiterService()):
         self.rate_limiter_service = rate_limiter_service
     

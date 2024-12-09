@@ -1,9 +1,9 @@
 from fastapi import APIRouter
-from worker_discovery_service.service import WrokerDiscoveryService
+from worker_discovery_service.service import WorkerDiscoveryService
 
 router = APIRouter(prefix='/services')
 
-worker_discovery_service = WrokerDiscoveryService()
+worker_discovery_service = WorkerDiscoveryService()
 
 @router.get('')
 async def service_discovery():
