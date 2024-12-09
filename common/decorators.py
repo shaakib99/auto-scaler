@@ -1,9 +1,8 @@
 from functools import wraps
 from cache_service.service import CacheService
-from pydantic import BaseModel
-from sqlalchemy.orm import DeclarativeBase
 from database_service.mysql_service import MySQLDatabaseService
 from hashlib import md5
+from common.abcs import GuardABC
 import json
 
 Base = MySQLDatabaseService.get_base() 
@@ -30,8 +29,8 @@ def cache(key: str):
     return decorator
 
 
-def UseGuard(guard):
-    async def decorator(func):
+def UseGuard(guard: GuardABC):
+    def decorator(func):
         @wraps(func)
         async def wrapper(*args, **kwargs):
             await guard(*args, **kwargs)

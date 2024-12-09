@@ -120,7 +120,7 @@ class WorkerService(ServiceABC):
         )
 
         ports = await self.port_service.get_all(Query(filter_by=f"worker_id={worker.id}", limit=100000))
-        environment_variables = await self.environ_variable_service.get_all(Query(filter_by=f"worker_id={worker.id}", limit=100000))
+        environment_variables = await self.environment_variable_service.get_all(Query(filter_by=f"worker_id={worker.id}", limit=100000))
 
         for port in ports:
             create_port_model = CreatePortWithWorkerModel(

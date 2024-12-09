@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from typing import Annotated
 from common.models import Query
 from worker_service.service import WorkerService
 from worker_service.models import CreateWorkerModel, WorkerResponseModel
-from common.decorators import cache, UseGuard
+from common.decorators import cache
 from common.enums import CacheKeysEnum
 
 router = APIRouter(prefix='/workers')
@@ -16,7 +16,7 @@ async def clone_worker(id: int | str):
 
 @router.get('/{id}', status_code=200, response_model=WorkerResponseModel, response_model_exclude_none=True)
 @cache(CacheKeysEnum.WORKER_GET_ONE.value)
-async def get_one(id: int | str):
+async def get_one(id: int | str, request: Request):
     return await worker_service.get_one(id)
 
 @router.get('', status_code=200, response_model=list[WorkerResponseModel], response_model_exclude_none=True)
