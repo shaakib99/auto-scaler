@@ -1,5 +1,4 @@
 import pytest
-from fastapi import Request, Header
 from rate_limiter_service.__test__.mocks import *
 from common.exceptions import TooManyRequestsException
 
