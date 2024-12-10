@@ -4,6 +4,7 @@ from rate_limiter_service.models import TokenBucketParamModel
 import json
 from datetime import datetime
 from common.exceptions import TooManyRequestsException
+
 class RateLimiterService:
     def __init__(self, cache_service: CacheService = None):
         self.cache_service = cache_service or CacheService()
