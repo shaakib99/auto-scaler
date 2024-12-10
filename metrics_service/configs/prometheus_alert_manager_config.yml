@@ -19,13 +19,13 @@ receivers:
 
   - name: "clone-worker"
     webhook_configs:
-      - url: http://host.docker.internal:8000/worker/clone
+      - url: http://host.docker.internal:8000/workers/clone
 
   - name: "remove-worker"
     webhook_configs:
-      - url: http://host.docker.internal:8000/worker/remove
+      - url: http://host.docker.internal:8000/workers/remove
 
   - name: "alert-instance-down"
     webhook_configs:
-      - url: http://host.docker.internal:8000/worker/remove
+      - url: http://host.docker.internal:8000/workers/remove
     

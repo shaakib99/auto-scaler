@@ -5,14 +5,15 @@ from worker_service.service import WorkerService
 from worker_service.models import CreateWorkerModel, WorkerResponseModel
 from common.decorators import cache
 from common.enums import CacheKeysEnum
+from metrics_service.models import AlertData
 
 router = APIRouter(prefix='/workers')
 
 worker_service = WorkerService()
 
 @router.post('/clone', response_model=WorkerResponseModel)
-async def clone_worker(id: int | str):
-    return await worker_service.clone_worker(id)
+async def clone_worker(data: AlertData):
+    return await worker_service.clone_worker(data.commonAnnotations.instance)
 
 @router.get('/{id}', status_code=200, response_model=WorkerResponseModel, response_model_exclude_none=True)
 @cache(CacheKeysEnum.WORKER_GET_ONE.value)

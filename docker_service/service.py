@@ -30,7 +30,7 @@ class DockerContainerService:
     
     async def get_one(self, id: str):
         try:
-            self.client.containers.get(id)
+            return self.client.containers.get(id)
         except docker.errors.NotFound:
             return
 

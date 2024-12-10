@@ -12,8 +12,6 @@ class EnvironmentVariableService(ServiceABC):
     def __init__(self, 
         environment_variable_model: DatabaseServiceABC[EnvironmentVariableSchema] = None, 
         worker_service: ServiceABC[WorkerSchema] = None):
-
-
         self.environment_variable_model = environment_variable_model or DatabaseService(EnvironmentVariableSchema)
         self._worker_service = worker_service
     
@@ -28,11 +26,11 @@ class EnvironmentVariableService(ServiceABC):
         worker = await self.worker_service.get_one(data.worker_id)
         if not worker:
             raise NotFoundException(f"worker id {data.worker_id} not found")
-        environment_variable_model = EnvironmentVariableModel()
-        environment_variable_model.worker_id = data.worker_id
-        environment_variable_model.key = data.key
-        environment_variable_model.value = data.value
-        return await self.environment_variable_model.create_one(environment_variable_model)
+        environment_variable = EnvironmentVariableModel()
+        environment_variable.worker_id = data.worker_id
+        environment_variable.key = data.key
+        environment_variable.value = data.value
+        return await self.environment_variable_model.create_one(environment_variable)
     
     async def update_one(self, id: int | str, data: UpdateEnvironmentVariableModel):
         environ_variable = await self.get_one(id)
