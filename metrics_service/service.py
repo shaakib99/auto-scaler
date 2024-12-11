@@ -1,13 +1,15 @@
 from docker_service.service import DockerContainerService
-from prometheus_client import generate_latest, Gauge
+from prometheus_client import generate_latest, Gauge, Counter
 from fastapi.responses import Response
 
 class MetricsService:
+    cpu_usage_in_percentage = Gauge('cpu_usage_in_percentage', 'cpu usage per container', ["container_id"])
+    ram_usage_in_percentage = Gauge('ram_usage_in_percentage', 'ram usage per container', ["container_id"])
+    storage_usage_in_percentage = Gauge('storage_usage_in_percentage', 'storage usage per container', ["container_id"])
+    request_counter = Counter('request_counter', 'Number of requests', ['method', 'endpoint', 'status_code'])
+    
     def __init__(self, docker_container_service:DockerContainerService = None):
         self.docker_container_service = docker_container_service or DockerContainerService()
-        self.cpu_usage_in_percentage = Gauge('cpu_usage_in_percentage', 'cpu usage per container', ["container_id"])
-        self.ram_usage_in_percentage = Gauge('ram_usage_in_percentage', 'ram usage per container', ["container_id"])
-        self.storage_usage_in_percentage = Gauge('storage_usage_in_percentage', 'storage usage per container', ["container_id"])
     
     async def caculate_cpu_percentage_from_docker_stats(self, stats):
         cpu_delta = (
@@ -49,18 +51,6 @@ class MetricsService:
         return total_used_storage
     
     async def generate_metrics(self, container_id: str):
-        # if container_id == "1":
-        #     return Response(content=None, status_code=500)
-        #     self.cpu_usage_in_percentage.labels(f"{container_id}").set(50)
-        #     self.ram_usage_in_percentage.labels(f"{container_id}").set(50)
-        #     self.storage_usage_in_percentage.labels(f"{container_id}").set(50)
-        
-        # if container_id == "2":
-        #     self.cpu_usage_in_percentage.labels(f"{container_id}").set(50)
-        #     self.ram_usage_in_percentage.labels(f"{container_id}").set(50)
-        #     self.storage_usage_in_percentage.labels(f"{container_id}").set(50)
-        #     return Response(content=generate_latest(), status_code=200)
-
         docker_stats = await self.docker_container_service.get_stats(container_id)
         if docker_stats is None: 
             return Response(content=None, status_code=404)
@@ -69,9 +59,10 @@ class MetricsService:
         memory_percentage = await self.calculate_ram_percentage_from_docker_stats(docker_stats["memory_stats"])
         total_storage_usage = await self.calculate_storage_usage_from_docker_stats(docker_stats["blkio_stats"], "GB")
 
-        self.cpu_usage_in_percentage.labels(f"{container_id}").set(cpu_percentage)
-        self.ram_usage_in_percentage.labels(f"{container_id}").set(memory_percentage)
-        self.storage_usage_in_percentage.labels(f"{container_id}").set(total_storage_usage)
+        MetricsService.cpu_usage_in_percentage.labels(container_id = container_id).set(cpu_percentage)
+        MetricsService.ram_usage_in_percentage.labels(container_id = container_id).set(memory_percentage)
+        MetricsService.storage_usage_in_percentage.labels(container_id = container_id).set(total_storage_usage)
+
 
         return Response(content=generate_latest(), status_code=200)
 
