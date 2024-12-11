@@ -1,3 +1,4 @@
+from metrics_service.service import MetricsService
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.requests import Request
 from fastapi.responses import Response
@@ -32,6 +33,9 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             request_tracing_model.status_code = result.status_code
             request_tracing_model.duration_in_second = (datetime.now() - req_start_time).seconds
             await LoggingService.save_otel_request_data(request_tracing_model, req_tracer)
+
+            MetricsService.request_counter.labels(method = request_tracing_model.method, endpoint=request_tracing_model.url, status_code=request_tracing_model.status_code).inc()
+
 
             resp = Response(
                 content=response,

@@ -1,4 +1,5 @@
 from logging_service.models import  RequestTracingModel
+from metrics_service.service import MetricsService
 from opentelemetry.trace import Span
 
 class LoggingService:
@@ -14,3 +15,6 @@ class LoggingService:
         tracer.set_attribute("http.response", data.response_str)
         tracer.set_attribute("http.status_code", data.status_code)
         tracer.set_attribute("http.duration", data.duration_in_second)
+
+
+        
