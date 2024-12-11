@@ -34,7 +34,7 @@ class WorkerService(ServiceABC):
         return self._port_service
     
     @property
-    def environ_variable_service(self):
+    def environment_variable_service(self):
         if self._environment_variable_service is None:
             from environment_variable_service.service import EnvironmentVariableService
             self._environment_variable_service = EnvironmentVariableService()
@@ -110,8 +110,11 @@ class WorkerService(ServiceABC):
         await self.docker_service.remove_one(worker.container_id)
         return await self.worker_model.delete_one(id)
     
-    async def clone_worker(self, id: str | int):
-        worker = await self.get_one(id)
+    async def clone_worker(self, container_id: str | int):
+        workers = await self.get_all(Query(limit = 1, filter_by=f"container_id='{container_id}'"))
+        if len(workers) == 0:
+            raise NotFoundException('Container not found')
+        worker = workers[0]
         create_worker_model = CreateWorkerModel(
             cpu = worker.cpu,
             ram = worker.ram,
@@ -135,6 +138,12 @@ class WorkerService(ServiceABC):
                 value = environment_variable.value
             )
             create_worker_model.environment_variables.append(create_environment_variable_model)
-        
         result = await self.create_one(create_worker_model)
         return result
+    
+    async def remove_worker(self, container_id: str | int):
+        workers = await self.get_all(Query(limit = 1, filter_by=f"container_id='{container_id}'"))
+        if len(workers) == 0:
+            raise NotFoundException('Container not found')
+        worker = workers[0]
+        return await self.delete_one(worker.id)

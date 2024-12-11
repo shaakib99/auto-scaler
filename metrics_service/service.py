@@ -9,26 +9,26 @@ class MetricsService:
         self.ram_usage_in_percentage = Gauge('ram_usage_in_percentage', 'ram usage per container', ["container_id"])
         self.storage_usage_in_percentage = Gauge('storage_usage_in_percentage', 'storage usage per container', ["container_id"])
     
-    async def caculate_cpu_percentage_from_docker_stats(stats):
+    async def caculate_cpu_percentage_from_docker_stats(self, stats):
         cpu_delta = (
-            stats["cpu_usage"]["total_usage"]
+            stats["cpu_stats"]["cpu_usage"]["total_usage"]
             - stats["precpu_stats"]["cpu_usage"]["total_usage"]
         )
         system_delta = (
-            stats["system_cpu_usage"]
+            stats["cpu_stats"]["system_cpu_usage"]
             - stats["precpu_stats"]["system_cpu_usage"]
         )
-        online_cpus = stats["online_cpus"]
+        online_cpus = stats["cpu_stats"]["online_cpus"]
         cpu_percentage = max(0, (cpu_delta / system_delta) * online_cpus * 100)
         return cpu_percentage
     
-    async def calculate_ram_percentage_from_docker_stats(stats):
+    async def calculate_ram_percentage_from_docker_stats(self, stats):
         memory_usage = stats["usage"]
         memory_limit = stats["limit"]
         memory_percentage = max(0, (memory_usage / memory_limit) * 100)
         return memory_percentage
     
-    async def calculate_storage_usage_from_docker_stats(stats, unit: str = "GB"):
+    async def calculate_storage_usage_from_docker_stats(self, stats, unit: str = "GB"):
         io_service_bytes = stats.get("io_service_bytes_recursive", [])
 
         read_bytes = sum(item["value"] for item in io_service_bytes if item["op"] == "Read")
@@ -65,7 +65,7 @@ class MetricsService:
         if docker_stats is None: 
             return Response(content=None, status_code=404)
 
-        cpu_percentage = await self.caculate_cpu_percentage_from_docker_stats(docker_stats["cpu_stats"])
+        cpu_percentage = await self.caculate_cpu_percentage_from_docker_stats(docker_stats)
         memory_percentage = await self.calculate_ram_percentage_from_docker_stats(docker_stats["memory_stats"])
         total_storage_usage = await self.calculate_storage_usage_from_docker_stats(docker_stats["blkio_stats"], "GB")
 
