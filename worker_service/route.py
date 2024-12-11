@@ -15,6 +15,10 @@ worker_service = WorkerService()
 async def clone_worker(data: AlertData):
     return await worker_service.clone_worker(data.commonAnnotations.instance)
 
+@router.post('/remove', response_model=WorkerResponseModel)
+async def remove_worker(data: AlertData):
+    return await worker_service.remove_worker(data.commonAnnotations.instance)
+
 @router.get('/{id}', status_code=200, response_model=WorkerResponseModel, response_model_exclude_none=True)
 @cache(CacheKeysEnum.WORKER_GET_ONE.value)
 async def get_one(id: int | str, request: Request):

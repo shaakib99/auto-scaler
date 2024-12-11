@@ -113,7 +113,7 @@ class WorkerService(ServiceABC):
     async def clone_worker(self, container_id: str | int):
         workers = await self.get_all(Query(limit = 1, filter_by=f"container_id='{container_id}'"))
         if len(workers) == 0:
-            raise NotFoundException(f'Container not found')
+            raise NotFoundException('Container not found')
         worker = workers[0]
         create_worker_model = CreateWorkerModel(
             cpu = worker.cpu,
@@ -140,3 +140,10 @@ class WorkerService(ServiceABC):
             create_worker_model.environment_variables.append(create_environment_variable_model)
         result = await self.create_one(create_worker_model)
         return result
+    
+    async def remove_worker(self, container_id: str | int):
+        workers = await self.get_all(Query(limit = 1, filter_by=f"container_id='{container_id}'"))
+        if len(workers) == 0:
+            raise NotFoundException('Container not found')
+        worker = workers[0]
+        return await self.delete_one(worker.id)
