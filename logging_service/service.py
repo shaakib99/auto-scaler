@@ -16,6 +16,5 @@ class LoggingService:
         tracer.set_attribute("http.status_code", data.status_code)
         tracer.set_attribute("http.duration", data.duration_in_second)
 
-        MetricsService.request_counter.labels(method = data.method, endpoint=data.url, status_code=data.status_code).inc()
 
         
