@@ -51,6 +51,8 @@ class MetricsService:
         return total_used_storage
     
     async def generate_metrics(self, container_id: str):
+        if container_id == 'host':
+            return Response(content=generate_latest(), status_code=200)
         docker_stats = await self.docker_container_service.get_stats(container_id)
         if docker_stats is None: 
             return Response(content=None, status_code=404)
