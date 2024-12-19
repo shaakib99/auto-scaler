@@ -8,6 +8,7 @@ services:
     depends_on:
       - mysql
       - redis
+      - prometheus
     ports:
       - 8000:8000
     environment:
@@ -29,8 +30,21 @@ services:
       - ./data/mysql/:/var/lib/mysql
   
   redis:
+    container_name: redis
     image: redis:latest
     ports:
       - 6379:6379
     volumes:
       - ./data/redis:/var/lib/redis
+  
+  prometheus:
+    container_name: prometheus
+    image: bitnami/prometheus:latest
+    ports:
+      - 9090:9090
+    volumes:
+      - ./metrics_service/configs/prometheus_config.yml:/etc/prometheus/prometheus.yml
+      - ./metrics_service/configs/rules/low_resource_usage_rule.yml:/etc/prometheus/low_resource_usage_rule.yml
+      - ./metrics_service/configs/rules/high_resource_usage_rule.yml:/etc/prometheus/high_resource_usage_rule.yml
+      - ./metrics_service/configs/rules/instance_down_rule.yml:/etc/prometheus/instance_down_rule.yml
+
