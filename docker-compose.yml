@@ -1,0 +1,50 @@
+version: "3.8"
+name: auto-scalar
+services:
+  host:
+    container_name: auto-scalar
+    build: .
+    restart: always
+    depends_on:
+      - mysql
+      - redis
+      - prometheus
+    ports:
+      - 8000:8000
+    environment:
+      - DB_URL=mysql://root:root@host.docker.internal/auto_scalar
+      - REDIS_HOST=host.docker.internal
+      - REDIS_PORT=6379
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  
+  mysql:
+    container_name: mysql
+    image: bitnami/mysql:latest
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=auto_scalar
+    volumes:
+      - ./data/mysql/:/var/lib/mysql
+  
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data/redis:/var/lib/redis
+  
+  prometheus:
+    container_name: prometheus
+    image: bitnami/prometheus:latest
+    ports:
+      - 9090:9090
+    volumes:
+      - ./metrics_service/configs/prometheus_config.yml:/etc/prometheus/prometheus.yml
+      - ./metrics_service/configs/rules/low_resource_usage_rule.yml:/etc/prometheus/low_resource_usage_rule.yml
+      - ./metrics_service/configs/rules/high_resource_usage_rule.yml:/etc/prometheus/high_resource_usage_rule.yml
+      - ./metrics_service/configs/rules/instance_down_rule.yml:/etc/prometheus/instance_down_rule.yml
+
