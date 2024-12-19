@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  host:
+    container_name: auto-scalar
+    build: .
+    ports:
+      - 8000:8000
+    environment:
+      - DB_URL=mysql://root:root@host.docker.internal/auto_scalar
+      - REDIS_HOST=host.docker.internal
+      - REDIS_PORT=6379
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
