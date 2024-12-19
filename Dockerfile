@@ -21,4 +21,4 @@ RUN pip install  -r  requirements.txt
 
 
 # CMD [ "opentelemetry-instrument","--service_name=host_server", "--metrics_exporter=otlp", "--traces_exporter=otlp", "fastapi", "dev" ]
-CMD ["fastapi", "dev" ]
+CMD ["fastapi", "run", "--host=0.0.0.0", "--port=8000" ]
