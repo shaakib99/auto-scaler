@@ -9,6 +9,7 @@ services:
       - mysql
       - redis
       - prometheus
+      - alert-manager
     ports:
       - 8000:8000
     environment:
@@ -47,4 +48,12 @@ services:
       - ./metrics_service/configs/rules/low_resource_usage_rule.yml:/etc/prometheus/low_resource_usage_rule.yml
       - ./metrics_service/configs/rules/high_resource_usage_rule.yml:/etc/prometheus/high_resource_usage_rule.yml
       - ./metrics_service/configs/rules/instance_down_rule.yml:/etc/prometheus/instance_down_rule.yml
+  
+  alert-manager:
+    container_name: alert-manager
+    image: prom/alertmanager:latest
+    ports:
+      - 9093:9093
+    volumes:
+      - ./metrics_service/configs/prometheus_alert_manager_config.yml:/etc/alertmanager/alertmanager.yml
 
