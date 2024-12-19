@@ -10,6 +10,7 @@ services:
       - redis
       - prometheus
       - alert-manager
+      - jaeger
     ports:
       - 8000:8000
     environment:
@@ -48,6 +49,7 @@ services:
       - ./metrics_service/configs/rules/low_resource_usage_rule.yml:/etc/prometheus/low_resource_usage_rule.yml
       - ./metrics_service/configs/rules/high_resource_usage_rule.yml:/etc/prometheus/high_resource_usage_rule.yml
       - ./metrics_service/configs/rules/instance_down_rule.yml:/etc/prometheus/instance_down_rule.yml
+      - ./data/prometheus/:/etc/prometheus/data
   
   alert-manager:
     container_name: alert-manager
@@ -57,3 +59,17 @@ services:
     volumes:
       - ./metrics_service/configs/prometheus_alert_manager_config.yml:/etc/alertmanager/alertmanager.yml
 
+  jaeger:
+    container_name: jaeger
+    image: rancher/mirrored-jaegertracing-all-in-one:1.60.0
+    ports:
+      - 14250:14250
+      - 14268:14268
+      - 16686:16686
+      - 4317:4317
+      - 4318:4318
+      - 5775:5775
+      - 5778:5778
+      - 6831:6831
+      - 6832:6832
+      - 9411:9411
