@@ -3,7 +3,7 @@ groups:
     rules:
     - alert: instance_down
       expr: up{job="monitor_servers"} == 0
-      for: 2m
+      for: 5m
       keep_firing_for: 5m
       labels:
         severity: critical

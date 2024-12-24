@@ -36,7 +36,6 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
             MetricsService.request_counter.labels(method = request_tracing_model.method, endpoint=request_tracing_model.url, status_code=request_tracing_model.status_code).inc()
 
-
             resp = Response(
                 content=response,
                 status_code=result.status_code,
@@ -44,5 +43,10 @@ class LoggingMiddleware(BaseHTTPMiddleware):
                 media_type=result.media_type,
             )
             resp.headers["Content-Length"] = str(len(response.encode(result.charset or 'utf-8')))
+            if 'content-type' in result.headers:
+                resp.headers["Content-Type"] =  result.headers['content-type']
+            else:
+                resp.headers["Content-Type"] =  'text/plain'
+
             return resp
 
