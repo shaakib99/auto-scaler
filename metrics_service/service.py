@@ -1,6 +1,6 @@
 from docker_service.service import DockerContainerService
-from prometheus_client import generate_latest, Gauge, Counter
-from fastapi.responses import Response
+from prometheus_client import generate_latest, Gauge, Counter, CONTENT_TYPE_LATEST
+from fastapi.responses import Response, PlainTextResponse
 
 class MetricsService:
     cpu_usage_in_percentage = Gauge('cpu_usage_in_percentage', 'cpu usage per container', ["container_id"])
@@ -12,6 +12,15 @@ class MetricsService:
         self.docker_container_service = docker_container_service or DockerContainerService()
     
     async def caculate_cpu_percentage_from_docker_stats(self, stats):
+        if not ("cpu_stats" in stats and "cpu_usage" in stats["cpu_stats"]): 
+            return 0
+        if not ("cpu_stats" in stats and "system_cpu_usage" in stats["cpu_stats"]): 
+            return 0
+        if not ("precpu_stats" in stats and "system_cpu_usage" in stats["precpu_stats"]): 
+            return 0
+
+
+
         cpu_delta = (
             stats["cpu_stats"]["cpu_usage"]["total_usage"]
             - stats["precpu_stats"]["cpu_usage"]["total_usage"]
@@ -66,5 +75,5 @@ class MetricsService:
         MetricsService.storage_usage_in_percentage.labels(container_id = container_id).set(total_storage_usage)
 
 
-        return Response(content=generate_latest(), status_code=200)
+        return PlainTextResponse(content=generate_latest(), status_code=200)
 
