@@ -22,6 +22,7 @@ The Auto-Scaler is a lightweight tool designed to monitor Docker container resou
 - `Prometheus`
 - `Prometheus-Alertmanager`
 - `Postman`
+- `alembic` to migrate database
 
 ## Running everything
 1. Clone the repository:
